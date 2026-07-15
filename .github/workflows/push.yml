@@ -18,6 +18,11 @@ on:
         required: false
         type: boolean
         default: false
+      force_push_latest:
+        description: "强制重发最新一期用于测试（会推送给所有接收目标）"
+        required: false
+        type: boolean
+        default: false
       content_mode:
         description: "推送完整内容或摘要"
         required: false
@@ -60,6 +65,7 @@ jobs:
           CONTENT_MODE: ${{ inputs.content_mode || vars.CONTENT_MODE || 'full' }}
           DRY_RUN: ${{ inputs.dry_run || 'false' }}
           PUSH_ON_FIRST_RUN: ${{ inputs.push_on_first_run || 'false' }}
+          FORCE_PUSH_LATEST: ${{ inputs.force_push_latest || 'false' }}
           HTTP_CONNECT_TIMEOUT: "10"
           HTTP_READ_TIMEOUT: "20"
           MAX_CATCHUP_ITEMS: "6"

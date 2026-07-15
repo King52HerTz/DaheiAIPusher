@@ -57,6 +57,7 @@ def run() -> int:
     state_file = Path(os.getenv("STATE_FILE") or "data/state.json")
     dry_run = env_bool("DRY_RUN")
     push_on_first_run = env_bool("PUSH_ON_FIRST_RUN")
+    force_push_latest = env_bool("FORCE_PUSH_LATEST")
     content_mode = (os.getenv("CONTENT_MODE") or "full").strip().lower()
     if content_mode not in {"full", "summary"}:
         raise ValueError("CONTENT_MODE 只能是 full 或 summary")
@@ -73,7 +74,11 @@ def run() -> int:
     print(f"RSS 中读取到 {len(items)} 期，最新一期：{items[0].title}")
 
     state = load_state(state_file)
-    if not state.last_guid:
+    if force_push_latest:
+        pending = [items[0]]
+        found_previous = True
+        print("手动测试模式：强制重发最新一期，推送后不修改去重状态。")
+    elif not state.last_guid:
         if not push_on_first_run:
             if dry_run:
                 print(f"[DRY RUN] 首次运行将建立基线：{items[0].guid}")
@@ -120,8 +125,11 @@ def run() -> int:
     for item in pending:
         print(f"正在推送：{item.title} ({item.guid})")
         client.send(build_message(item, content_mode=content_mode))
-        save_state(state_file, PushState(last_guid=item.guid))
-        print(f"推送成功并更新状态：{item.guid}")
+        if force_push_latest:
+            print(f"测试推送成功，去重状态保持不变：{item.guid}")
+        else:
+            save_state(state_file, PushState(last_guid=item.guid))
+            print(f"推送成功并更新状态：{item.guid}")
     return 0
 
 

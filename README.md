@@ -24,6 +24,8 @@
 
 使用 WxPusher 扫描下面的二维码，就能关注我创建的主题 **「大黑AI速报」**：
 
+还没有安装 WxPusher？安卓手机可以在手机自带的应用商店中搜索 **WxPusher**，iPhone 或 iPad 可以在 **App Store** 中搜索 **WxPusher** 安装。安装完成后，再使用 WxPusher 扫描下面的二维码即可订阅。
+
 <p align="center">
   <img src="https://wxpusher.zjiecode.com/api/qrcode/m5pkKxplAx3CdxLyuhsVtysKe953eGVu1UiicQjPfhwdIE3SIew36Qr7dDL0K4yZ.jpg" width="280" alt="大黑AI速报 Topic 订阅二维码">
 </p>
@@ -132,6 +134,7 @@ Actions → Dahei AI News Push → Run workflow
 
 - `dry_run`：只检查，不发送，也不修改状态；
 - `push_on_first_run`：第一次就发送当前最新一期；
+- `force_push_latest`：无论是否推送过，都重新发送最新一期；适合测试排版，但 Topic 订阅者也会收到；
 - `content_mode`：选择完整内容 `full` 或摘要 `summary`。
 
 第一次测试建议：
@@ -230,6 +233,7 @@ python -m scripts.preview
 | `STATE_FILE` | `data/state.json` | 去重状态文件 |
 | `DRY_RUN` | `false` | 只检查，不发送、不更新状态 |
 | `PUSH_ON_FIRST_RUN` | `false` | 状态为空时是否推送最新一期 |
+| `FORCE_PUSH_LATEST` | `false` | 强制重发最新一期且不修改去重状态，用于手动测试 |
 | `MAX_CATCHUP_ITEMS` | `6` | 状态落后太多时最多补发几期 |
 | `HTTP_CONNECT_TIMEOUT` | `10` | 连接超时秒数 |
 | `HTTP_READ_TIMEOUT` | `20` | 读取超时秒数 |

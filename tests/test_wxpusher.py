@@ -17,6 +17,8 @@ class WxPusherTests(unittest.TestCase):
         )
         self.assertEqual(build_message(item), build_message(item))
         self.assertIn("完整内容", build_message(item).content)
+        self.assertIn("AI NEWS", build_message(item).content)
+        self.assertIn("打开网站查看完整速报", build_message(item).content)
 
     def test_summary_mode_does_not_include_full_content(self):
         item = FeedItem(
@@ -30,6 +32,27 @@ class WxPusherTests(unittest.TestCase):
         message = build_message(item, content_mode="summary")
         self.assertIn("本期摘要", message.content)
         self.assertNotIn("完整内容", message.content)
+
+    def test_full_mode_turns_rss_items_into_styled_cards(self):
+        item = FeedItem(
+            guid="issue-2",
+            title="第1496期 - 2026-07-16 00:01",
+            link="https://example.com/2",
+            summary="摘要",
+            content_html=(
+                "<h3>速报总结</h3><p>本期重点内容</p>"
+                "<h3>本期内容（共1条）</h3><ul><li>"
+                "<strong>[模型动态] 新模型正式发布</strong><br/>模型能力显著提升。"
+                "<br/><small>来源：<a href='https://source.example'>官方</a></small>"
+                "</li></ul>"
+            ),
+            published="",
+        )
+        message = build_message(item)
+        self.assertIn("模型动态", message.content)
+        self.assertIn("新模型正式发布", message.content)
+        self.assertIn("border-radius:14px", message.content)
+        self.assertIn("本期重点内容", message.content)
 
     def test_send_accepts_success_response(self):
         response = Mock()

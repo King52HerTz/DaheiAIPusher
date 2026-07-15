@@ -1,6 +1,12 @@
 """Build a browser preview of the latest styled WxPusher message."""
 
 from pathlib import Path
+import sys
+
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from src.feed import fetch_feed
 from src.wxpusher import build_message

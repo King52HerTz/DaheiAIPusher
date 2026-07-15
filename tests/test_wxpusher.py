@@ -17,8 +17,8 @@ class WxPusherTests(unittest.TestCase):
         )
         self.assertEqual(build_message(item), build_message(item))
         self.assertIn("完整内容", build_message(item).content)
-        self.assertIn("AI NEWS", build_message(item).content)
-        self.assertIn("打开网站查看完整速报", build_message(item).content)
+        self.assertIn("DAHEI AI BRIEF", build_message(item).content)
+        self.assertIn("去原网页看完整速报", build_message(item).content)
 
     def test_summary_mode_does_not_include_full_content(self):
         item = FeedItem(
@@ -51,8 +51,28 @@ class WxPusherTests(unittest.TestCase):
         message = build_message(item)
         self.assertIn("模型动态", message.content)
         self.assertIn("新模型正式发布", message.content)
-        self.assertIn("border-radius:14px", message.content)
+        self.assertIn("◆ AI 总结", message.content)
+        self.assertIn("[1] &nbsp;查看信源", message.content)
         self.assertIn("本期重点内容", message.content)
+        self.assertIn('href="https://source.example"', message.content)
+        self.assertIn("官方 &nbsp;↗", message.content)
+
+    def test_full_mode_groups_categories_in_editorial_order(self):
+        item = FeedItem(
+            guid="issue-3",
+            title="第1497期",
+            link="https://example.com/3",
+            summary="重点",
+            content_html=(
+                "<ul>"
+                "<li><strong>[行业资讯] 行业新闻</strong><br/>内容一</li>"
+                "<li><strong>[模型动态] 模型新闻</strong><br/>内容二</li>"
+                "</ul>"
+            ),
+            published="",
+        )
+        content = build_message(item).content
+        self.assertLess(content.index("模型动态"), content.index("行业资讯"))
 
     def test_send_accepts_success_response(self):
         response = Mock()

@@ -29,23 +29,9 @@ class PushMessage:
 
 
 FONT_STACK = "-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif"
+SERIF_STACK = "'Noto Serif SC','Songti SC','STSong',serif"
 
-CATEGORY_COLORS = {
-    "模型动态": ("#ede9fe", "#6d28d9"),
-    "产品工具": ("#e0e7ff", "#4338ca"),
-    "技巧教程": ("#cffafe", "#0e7490"),
-    "硬件动态": ("#fef3c7", "#b45309"),
-    "行业资讯": ("#ffe4e6", "#be123c"),
-}
-
-
-def _category_badge(category: str) -> str:
-    background, foreground = CATEGORY_COLORS.get(category, ("#e2e8f0", "#475569"))
-    return (
-        f'<span style="display:inline-block;padding:4px 9px;border-radius:999px;'
-        f'background:{background};color:{foreground};font-size:12px;font-weight:700;'
-        f'line-height:1.2;letter-spacing:.2px;">{html.escape(category)}</span>'
-    )
+CATEGORY_ORDER = ("模型动态", "产品工具", "技巧教程", "硬件动态", "行业资讯", "AI 快讯")
 
 
 def _issue_meta(item: FeedItem) -> str:
@@ -59,19 +45,80 @@ def _issue_meta(item: FeedItem) -> str:
     return item.title
 
 
-def _style_links(fragment: BeautifulSoup) -> None:
+def _style_inline_content(fragment: BeautifulSoup) -> None:
     for link in fragment.find_all("a"):
         link["style"] = (
-            "color:#4f46e5;text-decoration:none;font-weight:600;"
+            "color:#e85d04;text-decoration:none;font-weight:700;"
             "word-break:break-all;"
         )
+    for strong in fragment.find_all("strong"):
+        strong["style"] = "color:#e85d04;font-weight:700;"
+
+
+def _format_summary(value: str) -> str:
+    text = BeautifulSoup(value, "html.parser").get_text(" ", strip=True)
+    escaped = html.escape(text)
+    return re.sub(
+        r"\[([^][\n]{1,80})]",
+        r'<strong style="color:#e85d04;font-weight:750;">\1</strong>',
+        escaped,
+    )
+
+
+@dataclass(frozen=True)
+class _NewsEntry:
+    index: int
+    category: str
+    title: str
+    description: str
+    source_name: str
+    source_url: str
+    source_kind: str
+
+
+def _source_line(entry: _NewsEntry) -> str:
+    if not entry.source_url:
+        return ""
+    source_url = html.escape(entry.source_url, quote=True)
+    source_name = html.escape(entry.source_name or "查看原始信源")
+    source_kind = (
+        f'<span style="margin-left:7px;color:#9a948b;font-size:10px;">'
+        f'{html.escape(entry.source_kind)}</span>'
+        if entry.source_kind
+        else ""
+    )
+    return (
+        '<div style="margin-top:13px;color:#8a847b;font-size:11px;line-height:1.6;">'
+        '来源 · '
+        f'<a href="{source_url}" style="color:#e85d04;text-decoration:none;font-weight:750;'
+        'word-break:break-word;overflow-wrap:anywhere;">'
+        f'{source_name} &nbsp;↗</a>{source_kind}</div>'
+    )
+
+
+def _render_entry(entry: _NewsEntry) -> str:
+    reference = f'#{entry.index:02d}'
+    if entry.source_url:
+        reference = (
+            f'<a href="{html.escape(entry.source_url, quote=True)}" style="color:#e85d04;'
+            f'text-decoration:none;">[{entry.index}] &nbsp;查看信源 ↗</a>'
+        )
+    return (
+        '<div style="padding:21px 0 20px;border-bottom:1px solid #e8e3db;">'
+        f'<div style="margin-bottom:8px;color:#e85d04;font-family:monospace;font-size:11px;'
+        f'font-weight:800;letter-spacing:1px;">{reference}</div>'
+        f'<div style="margin-bottom:10px;color:#171717;font-family:{SERIF_STACK};font-size:19px;'
+        f'font-weight:900;line-height:1.42;letter-spacing:.1px;word-break:break-word;'
+        f'overflow-wrap:anywhere;">{html.escape(entry.title)}</div>'
+        '<div style="color:#3f3d39;font-size:14px;line-height:1.8;word-break:break-word;'
+        f'overflow-wrap:anywhere;">{entry.description}</div>{_source_line(entry)}</div>'
+    )
 
 
 def _styled_feed_body(item: FeedItem) -> tuple[str, int]:
-    """Convert the predictable RSS list into mobile-friendly news cards."""
+    """Convert the RSS list into a compact, link-preserving mobile newspaper."""
     soup = BeautifulSoup(item.content_html, "html.parser")
     list_items = soup.find_all("li")
-
     summary_text = item.summary
     first_heading = soup.find(["h2", "h3"])
     if first_heading:
@@ -79,7 +126,7 @@ def _styled_feed_body(item: FeedItem) -> tuple[str, int]:
         if summary_node:
             summary_text = summary_node.get_text(" ", strip=True) or summary_text
 
-    cards: list[str] = []
+    entries: list[_NewsEntry] = []
     for index, source_item in enumerate(list_items, start=1):
         fragment = BeautifulSoup(str(source_item), "html.parser")
         li = fragment.find("li")
@@ -96,49 +143,73 @@ def _styled_feed_body(item: FeedItem) -> tuple[str, int]:
         if strong:
             strong.extract()
 
+        source = li.find("small")
+        source_link = source.find("a") if source else None
+        source_name = source_link.get_text(" ", strip=True) if source_link else ""
+        source_url = str(source_link.get("href") or "") if source_link else ""
+        source_text = source.get_text(" ", strip=True) if source else ""
+        source_kind_match = re.search(r"\[([^]]+)]\s*$", source_text)
+        source_kind = source_kind_match.group(1) if source_kind_match else ""
+        if source:
+            source.extract()
+
         while li.contents and getattr(li.contents[0], "name", None) == "br":
             li.contents[0].extract()
+        while li.contents and getattr(li.contents[-1], "name", None) == "br":
+            li.contents[-1].extract()
 
-        _style_links(fragment)
-        for small in li.find_all("small"):
-            small["style"] = (
-                "display:block;margin-top:11px;padding-top:9px;border-top:1px solid #eef2f7;"
-                "color:#64748b;font-size:12px;line-height:1.65;"
-            )
-
+        _style_inline_content(fragment)
         description = "".join(str(node) for node in li.contents).strip()
-        cards.append(
-            '<div style="margin:0 0 12px;padding:16px 16px 15px;background:#ffffff;'
-            'border:1px solid #e5e7eb;border-radius:14px;box-shadow:0 3px 12px rgba(15,23,42,.05);">'
-            f'<div style="margin-bottom:9px;">{_category_badge(category)}</div>'
-            f'<div style="margin-bottom:8px;color:#0f172a;font-size:17px;font-weight:750;'
-            f'line-height:1.5;">{html.escape(news_title)}</div>'
-            f'<div style="color:#475569;font-size:14px;line-height:1.8;word-break:break-word;">'
-            f'{description}</div></div>'
+        entries.append(
+            _NewsEntry(
+                index=index,
+                category=category,
+                title=news_title,
+                description=description,
+                source_name=source_name,
+                source_url=source_url,
+                source_kind=source_kind,
+            )
         )
 
-    if not cards:
-        _style_links(soup)
+    if not entries:
+        _style_inline_content(soup)
         fallback = str(soup)
-        cards.append(
-            '<div style="padding:17px;background:#ffffff;border:1px solid #e5e7eb;'
-            f'border-radius:14px;color:#475569;font-size:14px;line-height:1.85;">{fallback}</div>'
+        content = (
+            '<div style="padding:25px 20px;color:#3f3d39;font-size:14px;line-height:1.85;">'
+            f'{fallback}</div>'
         )
+        return f'{_summary_section(summary_text)}{content}', 1
 
-    summary_card = (
-        '<div style="margin:14px 0 18px;padding:16px 17px;background:#eef2ff;'
-        'border:1px solid #c7d2fe;border-left:5px solid #6366f1;border-radius:12px;">'
-        '<div style="margin-bottom:7px;color:#4338ca;font-size:12px;font-weight:800;'
-        'letter-spacing:1px;">本期重点</div>'
-        f'<div style="color:#273253;font-size:15px;line-height:1.8;">'
-        f'{html.escape(summary_text)}</div></div>'
+    groups: dict[str, list[_NewsEntry]] = {}
+    for entry in entries:
+        groups.setdefault(entry.category, []).append(entry)
+    category_rank = {name: index for index, name in enumerate(CATEGORY_ORDER)}
+    categories = sorted(groups, key=lambda name: category_rank.get(name, len(CATEGORY_ORDER)))
+
+    sections: list[str] = []
+    for category in categories:
+        category_entries = groups[category]
+        sections.append(
+            '<div style="padding:27px 20px 5px;border-bottom:1px solid #e8e3db;">'
+            '<div style="padding-left:11px;border-left:4px solid #171717;color:#171717;'
+            f'font-family:{SERIF_STACK};font-size:22px;font-weight:900;line-height:1.25;">'
+            f'{html.escape(category)} <span style="color:#aaa39a;font-family:{FONT_STACK};'
+            f'font-size:11px;font-weight:600;">{len(category_entries)} 条</span></div>'
+            f'{"".join(_render_entry(entry) for entry in category_entries)}</div>'
+        )
+    return f'{_summary_section(summary_text)}{"".join(sections)}', len(entries)
+
+
+def _summary_section(summary: str) -> str:
+    return (
+        '<div style="padding:25px 20px 26px;border-bottom:1px solid #e8e3db;">'
+        '<div style="margin-bottom:11px;color:#e85d04;font-size:11px;font-weight:850;'
+        'letter-spacing:2px;">◆ AI 总结</div>'
+        '<div style="color:#242321;font-size:16px;font-weight:650;line-height:1.78;'
+        'word-break:break-word;overflow-wrap:anywhere;">'
+        f'{_format_summary(summary)}</div></div>'
     )
-    section_header = (
-        '<div style="margin:2px 2px 12px;color:#0f172a;font-size:18px;font-weight:800;">'
-        f'本期速览 <span style="color:#94a3b8;font-size:13px;font-weight:600;">'
-        f'· {len(cards)} 条</span></div>'
-    )
-    return f"{summary_card}{section_header}{''.join(cards)}", len(cards)
 
 
 def build_message(item: FeedItem, *, content_mode: str = "full") -> PushMessage:
@@ -150,38 +221,27 @@ def build_message(item: FeedItem, *, content_mode: str = "full") -> PushMessage:
     meta = html.escape(_issue_meta(item))
     header = (
         f'<div style="font-family:{FONT_STACK};width:100%;max-width:680px;box-sizing:border-box;'
-        'margin:0 auto;padding:14px;'
-        'background:#f4f7fb;color:#172033;">'
-        '<div style="padding:23px 21px 21px;border-radius:18px;'
-        'background:linear-gradient(135deg,#111827 0%,#312e81 52%,#2563eb 100%);'
-        'box-shadow:0 10px 24px rgba(49,46,129,.2);color:#ffffff;">'
-        '<div style="margin-bottom:16px;">'
-        '<span style="display:inline-block;padding:5px 10px;border:1px solid rgba(255,255,255,.3);'
-        'border-radius:999px;background:rgba(255,255,255,.12);font-size:11px;font-weight:800;'
-        'letter-spacing:1.2px;">⚡ AI NEWS · 4H UPDATE</span></div>'
-        '<div style="font-size:27px;font-weight:850;line-height:1.25;letter-spacing:.5px;">'
-        '大黑AI速报</div>'
-        f'<div style="margin-top:8px;color:#dbeafe;font-size:13px;line-height:1.5;">{meta}</div>'
-        '</div>'
+        'margin:0 auto;background:#faf9f6;color:#1a1a1a;overflow:hidden;">'
+        '<div style="height:5px;background:#ff6b00;font-size:0;line-height:0;">&nbsp;</div>'
+        '<div style="padding:23px 20px 22px;border-bottom:2px solid #1a1a1a;">'
+        '<div style="margin-bottom:16px;color:#77716a;font-family:monospace;font-size:10px;'
+        'font-weight:700;letter-spacing:1.6px;">DAHEI AI BRIEF <span style="color:#ff6b00;">●</span> 4H</div>'
+        f'<div style="font-family:{SERIF_STACK};font-size:30px;font-weight:900;line-height:1.2;'
+        'letter-spacing:1px;">大黑 AI 速报</div>'
+        f'<div style="margin-top:9px;color:#716c65;font-family:monospace;font-size:11px;'
+        f'line-height:1.5;">{meta}</div></div>'
     )
     footer = (
-        '<div style="margin-top:18px;padding:18px 16px;border-radius:14px;background:#ffffff;'
-        'border:1px solid #e5e7eb;text-align:center;">'
-        f'<a href="{link}" style="display:block;padding:13px 18px;border-radius:10px;'
-        'background:#4f46e5;color:#ffffff;text-decoration:none;font-size:15px;font-weight:800;">'
-        '打开网站查看完整速报 →</a>'
-        '<div style="margin-top:12px;color:#94a3b8;font-size:11px;line-height:1.6;">'
-        '内容来源：大黑AI速报 · 每4小时自动更新</div></div></div>'
+        '<div style="padding:27px 20px 30px;text-align:center;">'
+        f'<a href="{link}" style="display:block;padding:14px 18px;background:#1a1a1a;color:#ffffff;'
+        'text-decoration:none;font-size:14px;font-weight:800;letter-spacing:.3px;">'
+        '去原网页看完整速报 &nbsp;→</a>'
+        '<div style="margin-top:15px;color:#aaa39a;font-size:10px;line-height:1.7;">'
+        '由人工大黑制作<br/>DaheiAIPusher 自动转发 · 每 4 小时更新</div></div></div>'
     )
 
     if content_mode == "summary":
-        body = (
-            '<div style="margin:14px 0;padding:17px;background:#ffffff;border:1px solid #e5e7eb;'
-            'border-left:5px solid #6366f1;border-radius:12px;">'
-            '<div style="margin-bottom:7px;color:#4338ca;font-size:12px;font-weight:800;">本期重点</div>'
-            f'<div style="color:#334155;font-size:15px;line-height:1.8;">'
-            f'{html.escape(item.summary)}</div></div>'
-        )
+        body = _summary_section(item.summary)
     else:
         body, _ = _styled_feed_body(item)
 

@@ -149,7 +149,8 @@ def build_message(item: FeedItem, *, content_mode: str = "full") -> PushMessage:
     link = html.escape(item.link, quote=True)
     meta = html.escape(_issue_meta(item))
     header = (
-        f'<div style="font-family:{FONT_STACK};max-width:680px;margin:0 auto;padding:14px;'
+        f'<div style="font-family:{FONT_STACK};width:100%;max-width:680px;box-sizing:border-box;'
+        'margin:0 auto;padding:14px;'
         'background:#f4f7fb;color:#172033;">'
         '<div style="padding:23px 21px 21px;border-radius:18px;'
         'background:linear-gradient(135deg,#111827 0%,#312e81 52%,#2563eb 100%);'

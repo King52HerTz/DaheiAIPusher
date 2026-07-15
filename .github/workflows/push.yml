@@ -1,0 +1,80 @@
+name: Dahei AI News Push
+
+on:
+  schedule:
+    # 网站通常在北京时间 00/04/08/12/16/20 点更新。
+    # 每次在第 12、42 分钟检查，避开 Actions 整点高峰并提供一次补偿检查。
+    - cron: "12,42 0,4,8,12,16,20 * * *"
+      timezone: "Asia/Shanghai"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "只检查新内容，不发送也不更新状态"
+        required: false
+        type: boolean
+        default: false
+      push_on_first_run:
+        description: "状态为空时立即推送最新一期"
+        required: false
+        type: boolean
+        default: false
+      content_mode:
+        description: "推送完整内容或摘要"
+        required: false
+        type: choice
+        options:
+          - full
+          - summary
+        default: full
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dahei-ai-news-pusher
+  cancel-in-progress: false
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Fetch RSS and push new issues
+        env:
+          WXPUSHER_APP_TOKEN: ${{ secrets.WXPUSHER_APP_TOKEN }}
+          WXPUSHER_UID: ${{ secrets.WXPUSHER_UID }}
+          WXPUSHER_TOPIC_IDS: ${{ secrets.WXPUSHER_TOPIC_IDS }}
+          CONTENT_MODE: ${{ inputs.content_mode || vars.CONTENT_MODE || 'full' }}
+          DRY_RUN: ${{ inputs.dry_run || 'false' }}
+          PUSH_ON_FIRST_RUN: ${{ inputs.push_on_first_run || 'false' }}
+          HTTP_CONNECT_TIMEOUT: "10"
+          HTTP_READ_TIMEOUT: "20"
+          MAX_CATCHUP_ITEMS: "6"
+        run: python -m src.main
+
+      - name: Persist successful push state
+        if: always() && (github.event_name != 'workflow_dispatch' || inputs.dry_run == false)
+        run: |
+          if git diff --quiet -- data/state.json; then
+            echo "State unchanged."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/state.json
+          git commit -m "chore: update push state [skip ci]"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"

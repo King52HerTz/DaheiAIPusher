@@ -2,9 +2,9 @@ name: Dahei AI News Push
 
 on:
   schedule:
-    # 网站通常在北京时间 00/04/08/12/16/20 点更新。
-    # 每次在第 12、42 分钟检查，避开 Actions 整点高峰并提供一次补偿检查。
-    - cron: "12,42 0,4,8,12,16,20 * * *"
+    # GitHub 的定时任务可能延迟甚至被丢弃，因此不只押注网站更新时间。
+    # 全天每 20 分钟检查一次，并避开整点高峰；GUID 去重保证不会重复推送。
+    - cron: "7,27,47 * * * *"
       timezone: "Asia/Shanghai"
   workflow_dispatch:
     inputs:

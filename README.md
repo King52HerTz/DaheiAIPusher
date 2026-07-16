@@ -221,6 +221,27 @@ curl -fsSL https://raw.githubusercontent.com/King52HerTz/DaheiAIPusher/main/scri
   -o /tmp/update-dahei.sh && sudo bash /tmp/update-dahei.sh
 ```
 
+想让赛博牛马暂时休假，可以长期暂停服务器定时推送：
+
+```bash
+systemctl disable --now dahei-ai-pusher.timer
+```
+
+确认是否已经停止：
+
+```bash
+systemctl is-enabled dahei-ai-pusher.timer
+systemctl is-active dahei-ai-pusher.timer
+```
+
+重新开工：
+
+```bash
+systemctl enable --now dahei-ai-pusher.timer
+```
+
+暂停定时器不会删除 AppToken、代码或去重状态。如果 GitHub 自动排程也处于关闭状态，那么暂停服务器定时器后，公开主题将暂时不再收到新一期推送。更多说明见[云服务器完整部署教程](docs/server-deployment.md#暂停和重新开启推送)。
+
 ## 完整模式和摘要模式
 
 默认使用：

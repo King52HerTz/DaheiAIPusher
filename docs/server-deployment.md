@@ -127,6 +127,48 @@ curl -fsSL https://raw.githubusercontent.com/King52HerTz/DaheiAIPusher/main/scri
 - `/etc/dahei-ai-pusher.env` 中的 AppToken；
 - `/var/lib/dahei-ai-pusher/state.json` 中的去重状态。
 
+## 暂停和重新开启推送
+
+长期暂停服务器的自动检查：
+
+```bash
+systemctl disable --now dahei-ai-pusher.timer
+```
+
+这条命令会立即停止定时器，并阻止它在服务器重启后自动启动。它不会删除：
+
+- `/opt/dahei-ai-pusher` 中的项目代码；
+- `/etc/dahei-ai-pusher.env` 中的 AppToken；
+- `/var/lib/dahei-ai-pusher/state.json` 中的最后推送期号。
+
+确认定时器状态：
+
+```bash
+systemctl is-enabled dahei-ai-pusher.timer
+systemctl is-active dahei-ai-pusher.timer
+```
+
+停止后通常会分别显示：
+
+```text
+disabled
+inactive
+```
+
+重新开启自动推送：
+
+```bash
+systemctl enable --now dahei-ai-pusher.timer
+```
+
+再次查看下一次执行时间：
+
+```bash
+systemctl list-timers dahei-ai-pusher.timer
+```
+
+如果 GitHub Actions 的 `ENABLE_GITHUB_SCHEDULED_PUSH` 同时为 `false`，暂停服务器定时器后将没有任何自动推送来源，README 中的主题二维码仍然可以扫码关注，但订阅者暂时收不到新一期。重新开启服务器定时器后，程序会根据保存的状态继续检查并补发尚未推送的内容。
+
 ## 手动部署文件
 
 不使用一键安装器时，可以参考 [`deploy/server`](../deploy/server/)：

@@ -1,6 +1,6 @@
 # 大黑 AI 速报推送 ⚡
 
-> 一个把大黑 AI 速报自动送到手机的轻量工具。让 GitHub Actions 负责定时运行，我们只管看消息。
+> 一个把大黑 AI 速报自动送到手机的轻量工具。GitHub Actions 和云服务器都能负责定时运行，我们只管看消息。
 
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-自动推送-2088FF?logo=githubactions&logoColor=white)](https://github.com/King52HerTz/DaheiAIPusher/actions)
@@ -13,7 +13,7 @@
 整个流程由三个部分完成：
 
 - RSS：负责告诉我“有新一期了”；
-- GitHub Actions：负责定时起床干活；
+- GitHub Actions / 云服务器：负责定时起床干活；
 - WxPusher：负责把消息送到手机。
 
 最终效果就是：网站一更新，手机就能收到排版好的 AI 新闻卡片。
@@ -53,7 +53,7 @@
 ```text
 大黑AI速报 RSS
       ↓
-GitHub Actions 定时检查
+GitHub Actions / 云服务器定时检查
       ↓
 GUID 判断是不是新一期
       ↓
@@ -170,6 +170,45 @@ content_mode: full
 网站通常在北京时间 00、04、08、12、16、20 点更新。工作流不再只押注这些时间附近的两次任务，而是全天每 20 分钟检查一次；即使 GitHub 漏掉一次，后面还有连续补偿检查。发现 GUID 没变就会安静退出，不会重复轰炸。
 
 GitHub Actions 不是高铁时刻表，官方也说明定时任务在高负载时可能延迟甚至被丢弃。所以这里选择“多检查几次但不重复推送”，而不是指望一次 cron 永不迟到。
+
+## 我有云服务器，但我有点懒
+
+巧了，电脑最适合接手这种重复劳动。
+
+Ubuntu / Debian 服务器可以使用一键安装脚本。它会自动安装 Python 环境、保存配置、迁移去重状态，并创建每 15 分钟运行一次的 systemd 定时器：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/King52HerTz/DaheiAIPusher/main/scripts/install_server.sh \
+  -o /tmp/install-dahei.sh && sudo bash /tmp/install-dahei.sh
+```
+
+运行后只需要输入两个东西：
+
+- WxPusher `AppToken`，输入时屏幕不会显示；
+- 「大黑AI速报」的数字 `Topic ID`。
+
+服务器仍然需要定时询问 RSS“更新了吗”。每 15 分钟检查一次意味着最坏约 15 分钟发现更新；没有新一期时不会调用 WxPusher，更不会给手机发送空气。
+
+常用命令：
+
+```bash
+# 查看定时器
+systemctl list-timers dahei-ai-pusher.timer
+
+# 查看最近日志
+journalctl -u dahei-ai-pusher.service -n 100 --no-pager
+
+# 立即检查一次
+systemctl start dahei-ai-pusher.service
+```
+
+确认服务器连续运行正常后，在自己的 GitHub 仓库添加 Actions Variable：
+
+```text
+ENABLE_GITHUB_SCHEDULED_PUSH = false
+```
+
+这样只会关闭当前仓库的 GitHub 自动排程，`Run workflow` 手动测试仍然保留。其他开发者 Fork 本仓库后，如果不设置这个变量，GitHub Actions 仍会照常定时运行。
 
 ## 完整模式和摘要模式
 

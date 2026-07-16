@@ -41,6 +41,9 @@ concurrency:
 
 jobs:
   push:
+    # 运营者迁移到云服务器后，可在仓库 Actions Variables 中设置
+    # ENABLE_GITHUB_SCHEDULED_PUSH=false。手动运行不受影响，Fork 默认仍会定时运行。
+    if: github.event_name == 'workflow_dispatch' || vars.ENABLE_GITHUB_SCHEDULED_PUSH != 'false'
     runs-on: ubuntu-latest
     timeout-minutes: 10
 

@@ -110,7 +110,10 @@ set -a
 # shellcheck disable=SC1090
 source "${ENV_FILE}"
 set +a
-DRY_RUN=true "${APP_DIR}/.venv/bin/python" -m src.main
+(
+  cd "${APP_DIR}"
+  DRY_RUN=true "${APP_DIR}/.venv/bin/python" -m src.main
+)
 
 systemctl enable --now "${SERVICE_NAME}.timer"
 

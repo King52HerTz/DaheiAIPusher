@@ -187,6 +187,10 @@ curl -fsSL https://raw.githubusercontent.com/King52HerTz/DaheiAIPusher/main/scri
 - WxPusher `AppToken`，输入时屏幕不会显示；
 - 「大黑AI速报」的数字 `Topic ID`。
 
+第一次接触服务器也不用慌，命令看起来很长，真正需要你做的只有“复制、粘贴、填写两项”。完整的安装原理、日志查看、更新方法和常见问题都整理在：
+
+**[云服务器完整部署教程](docs/server-deployment.md)**
+
 服务器仍然需要定时询问 RSS“更新了吗”。每 15 分钟检查一次意味着最坏约 15 分钟发现更新；没有新一期时不会调用 WxPusher，更不会给手机发送空气。
 
 常用命令：
@@ -209,6 +213,13 @@ ENABLE_GITHUB_SCHEDULED_PUSH = false
 ```
 
 这样只会关闭当前仓库的 GitHub 自动排程，`Run workflow` 手动测试仍然保留。其他开发者 Fork 本仓库后，如果不设置这个变量，GitHub Actions 仍会照常定时运行。
+
+以后更新服务器代码也不用重新配置 AppToken：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/King52HerTz/DaheiAIPusher/main/scripts/update_server.sh \
+  -o /tmp/update-dahei.sh && sudo bash /tmp/update-dahei.sh
+```
 
 ## 完整模式和摘要模式
 

@@ -1,0 +1,11 @@
+[Unit]
+Description=Check Dahei AI RSS every 15 minutes
+
+[Timer]
+OnCalendar=*:0/15
+Persistent=true
+AccuracySec=1min
+Unit=dahei-ai-pusher.service
+
+[Install]
+WantedBy=timers.target

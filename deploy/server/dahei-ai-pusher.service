@@ -1,0 +1,10 @@
+[Unit]
+Description=Dahei AI News WxPusher
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/dahei-ai-pusher
+EnvironmentFile=/etc/dahei-ai-pusher.env
+ExecStart=/usr/bin/flock -n /run/lock/dahei-ai-pusher.lock /opt/dahei-ai-pusher/.venv/bin/python -m src.main

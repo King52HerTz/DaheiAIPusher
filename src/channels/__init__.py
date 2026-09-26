@@ -6,12 +6,14 @@ from typing import Any
 
 from .base import PushChannel, PushError
 from .email import EmailChannel
+from .feishu import FeishuChannel
 from .wxpusher import WxPusherChannel
 
 
 CHANNELS: dict[str, Any] = {
     "wxpusher": WxPusherChannel,
     "email": EmailChannel,
+    "feishu": FeishuChannel,
 }
 CHANNEL_NAMES = tuple(CHANNELS)
 

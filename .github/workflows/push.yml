@@ -75,6 +75,9 @@ jobs:
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
           FEISHU_WEBHOOK_URL: ${{ secrets.FEISHU_WEBHOOK_URL }}
           FEISHU_SECRET: ${{ secrets.FEISHU_SECRET }}
+          QQ_BOT_APP_ID: ${{ secrets.QQ_BOT_APP_ID }}
+          QQ_BOT_APP_SECRET: ${{ secrets.QQ_BOT_APP_SECRET }}
+          QQ_BOT_GROUP_OPENIDS: ${{ secrets.QQ_BOT_GROUP_OPENIDS }}
           CONTENT_MODE: ${{ inputs.content_mode || vars.CONTENT_MODE || 'full' }}
           DRY_RUN: ${{ inputs.dry_run || 'false' }}
           PUSH_ON_FIRST_RUN: ${{ inputs.push_on_first_run || 'false' }}

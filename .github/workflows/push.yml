@@ -62,9 +62,19 @@ jobs:
 
       - name: Fetch RSS and push new issues
         env:
+          PUSH_CHANNELS: ${{ vars.PUSH_CHANNELS || 'wxpusher' }}
           WXPUSHER_APP_TOKEN: ${{ secrets.WXPUSHER_APP_TOKEN }}
           WXPUSHER_UID: ${{ secrets.WXPUSHER_UID }}
           WXPUSHER_TOPIC_IDS: ${{ secrets.WXPUSHER_TOPIC_IDS }}
+          EMAIL_SMTP_HOST: ${{ vars.EMAIL_SMTP_HOST || 'smtp.qq.com' }}
+          EMAIL_SMTP_PORT: ${{ vars.EMAIL_SMTP_PORT || '465' }}
+          EMAIL_SMTP_SSL: ${{ vars.EMAIL_SMTP_SSL || 'true' }}
+          EMAIL_SMTP_USER: ${{ secrets.EMAIL_SMTP_USER }}
+          EMAIL_SMTP_AUTH_CODE: ${{ secrets.EMAIL_SMTP_AUTH_CODE }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          FEISHU_WEBHOOK_URL: ${{ secrets.FEISHU_WEBHOOK_URL }}
+          FEISHU_SECRET: ${{ secrets.FEISHU_SECRET }}
           CONTENT_MODE: ${{ inputs.content_mode || vars.CONTENT_MODE || 'full' }}
           DRY_RUN: ${{ inputs.dry_run || 'false' }}
           PUSH_ON_FIRST_RUN: ${{ inputs.push_on_first_run || 'false' }}

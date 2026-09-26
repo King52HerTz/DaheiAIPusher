@@ -5,11 +5,13 @@ from __future__ import annotations
 from typing import Any
 
 from .base import PushChannel, PushError
+from .email import EmailChannel
 from .wxpusher import WxPusherChannel
 
 
 CHANNELS: dict[str, Any] = {
     "wxpusher": WxPusherChannel,
+    "email": EmailChannel,
 }
 CHANNEL_NAMES = tuple(CHANNELS)
 

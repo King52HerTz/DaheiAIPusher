@@ -6,3 +6,5 @@ venv/
 .env
 .idea/
 preview.html
+docs/dev/
+scripts/dev/

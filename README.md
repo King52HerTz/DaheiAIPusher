@@ -18,25 +18,13 @@
 
 最终效果就是：网站一更新，手机就能收到排版好的 AI 新闻卡片。
 
-## 实际推送效果
-
-不是概念图，也不是“最终效果仅供参考”——下面就是 WxPusher 实际收到的完整长截图。栏目和摘要一目了然，橙色的“查看信源”可以直接点击。
-
-<p align="center">
-  <a href="docs/images/wxpusher-long-preview.jpg">
-    <img src="docs/images/wxpusher-long-preview.jpg" width="300" alt="大黑AI速报在 WxPusher 中的实际推送长截图">
-  </a>
-</p>
-
-<p align="center"><sub>图片有亿点长，点击可以查看原图。</sub></p>
-
 ## 三种方式订阅，扫码就行
 
 完全合理，配置环境的时间够看好几期速报了。下面三种方式任选其一，都不需要下载代码、不需要 GitHub 账号、更不需要自己搭服务。大黑每 4 小时更新一期，新内容发布后几分钟内就会自动送达。
 
-### 方式一：WxPusher（微信里收）
+### 方式一：WxPusher App
 
-安装 WxPusher 后扫描下面的二维码，就能关注主题 **「大黑AI速报」**；懒得扫码的话，也可以直接在 WxPusher 里点「免费消息」，搜索 **大黑AI速报**，点订阅，完事。
+WxPusher 是一个独立的推送 App——安卓手机在自带应用商店搜索 **WxPusher**，iPhone 或 iPad 在 **App Store** 搜索 **WxPusher** 安装即可。装好之后扫描下面的二维码，就能关注主题 **「大黑AI速报」**；懒得扫码的话，也可以直接在 WxPusher 里点「免费消息」，搜索 **大黑AI速报**，点订阅，完事。
 
 <p align="center">
   <img src="https://wxpusher.zjiecode.com/api/qrcode/m5pkKxplAx3CdxLyuhsVtysKe953eGVu1UiicQjPfhwdIE3SIew36Qr7dDL0K4yZ.jpg" width="260" alt="大黑AI速报 Topic 订阅二维码">
@@ -44,7 +32,13 @@
 
 <p align="center"><strong>扫码订阅，剩下的交给赛博牛马</strong></p>
 
-还没有安装 WxPusher？安卓手机在自带应用商店搜索 **WxPusher**，iPhone 或 iPad 在 **App Store** 搜索 **WxPusher** 安装即可。二维码没有显示？[点这里单独打开](https://wxpusher.zjiecode.com/api/qrcode/m5pkKxplAx3CdxLyuhsVtysKe953eGVu1UiicQjPfhwdIE3SIew36Qr7dDL0K4yZ.jpg)。想取消时，直接在 WxPusher 的订阅管理中取消即可。
+二维码没有显示？[点这里单独打开](https://wxpusher.zjiecode.com/api/qrcode/m5pkKxplAx3CdxLyuhsVtysKe953eGVu1UiicQjPfhwdIE3SIew36Qr7dDL0K4yZ.jpg)。想取消时，直接在 WxPusher 的订阅管理中取消即可。
+
+订阅之后收到的是什么样子？不是概念图，也不是“最终效果仅供参考”——这是 WxPusher 实际收到的消息详情：栏目和摘要一目了然，橙色的“查看信源”可以直接点击。
+
+<p align="center">
+  <img src="docs/images/wxpusher-push.jpg" width="260" alt="大黑AI速报在 WxPusher 中的实际推送效果">
+</p>
 
 ### 方式二：QQ 群（群号 1125120360）
 

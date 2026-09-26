@@ -115,6 +115,14 @@ Settings → Secrets and variables → Actions
 
 两者可以同时配置，但不能同时留空。
 
+想同时用 QQ 邮箱或飞书接收，再按需添加（只在 `PUSH_CHANNELS` 启用了对应通道时才必填）：
+
+| Secret / Variable | 适用场景 |
+| --- | --- |
+| `PUSH_CHANNELS` | Variables，逗号分隔的通道列表，如 `wxpusher,email,feishu`；不设置时默认只有 `wxpusher` |
+| `EMAIL_SMTP_USER` / `EMAIL_SMTP_AUTH_CODE` / `EMAIL_TO` | QQ 邮箱通道：发件邮箱、授权码、收件邮箱 |
+| `FEISHU_WEBHOOK_URL` / `FEISHU_SECRET` | 飞书通道：群自定义机器人地址与签名密钥 |
+
 > [!CAUTION]
 > AppToken 不能发给别人，不能提交到代码，也不要截图发到 Issue。泄漏后别人可以顶着你的应用名义发消息，场面可能比实验课忘记保存代码更难收拾。
 
@@ -158,6 +166,46 @@ content_mode: full
 ```
 
 看到绿色对勾先别急着开香槟：它代表脚本执行成功。手机是否弹通知，还要确认自己确实订阅了对应 Topic，并开启了系统通知权限。
+
+## 其他推送通道：QQ 邮箱与飞书
+
+除了 WxPusher，还可以把同一期速报同时送进 QQ 邮箱和飞书群。用 `PUSH_CHANNELS` 控制启用哪些通道：
+
+```text
+PUSH_CHANNELS = wxpusher,email,feishu
+```
+
+不设置时默认只有 `wxpusher`，行为与之前完全一致。每个通道的去重状态相互独立：某一路失败不会影响其他路，也不会导致重复推送。
+
+### QQ 邮箱通道
+
+1. 在 QQ 邮箱网页版进入 `设置 → 账号`，开启「IMAP/SMTP 服务」，按提示生成**授权码**（不是 QQ 登录密码）；
+2. 配置以下变量：
+
+```text
+EMAIL_SMTP_USER = 你的QQ邮箱@qq.com
+EMAIL_SMTP_AUTH_CODE = 你的授权码
+EMAIL_TO = 收件邮箱@qq.com          # 多个收件人用英文逗号分隔
+```
+
+可选：`EMAIL_SMTP_HOST/PORT/SSL` 可换成其他邮箱服务商（默认 `smtp.qq.com:465` SSL）。邮件正文直接复用 WxPusher 的那份排版卡片，第一封邮件如果进了垃圾箱，手动加白名单即可。
+
+### 飞书通道
+
+1. 建一个飞书群（自建的群即可），进入 `群设置 → 群机器人 → 添加自定义机器人`；
+2. 安全设置选择**签名校验**，记下 `签名密钥`，完成创建后复制机器人 `Webhook 地址`；
+3. 配置以下变量：
+
+```text
+FEISHU_WEBHOOK_URL = https://open.feishu.cn/open-apis/bot/v2/hook/xxxx
+FEISHU_SECRET = 签名密钥
+```
+
+飞书收到的不是大段文字，而是一张可交互的消息卡片：AI 总结、分类分组、编号条目和信源链接都在卡片里，底部按钮可以直接跳转原网页。内容超长时会自动降级为摘要卡片。
+
+### 服务器上启用
+
+云服务器部署的用户直接编辑 `/etc/dahei-ai-pusher.env` 加上上述变量即可，详细步骤（含"先单独验证邮箱/飞书、不打扰主题订阅者"的验收方式）见[云服务器完整部署教程](docs/server-deployment.md#启用-qq-邮箱与飞书通道)。
 
 ## 什么时候推送
 
@@ -303,9 +351,19 @@ python -m scripts.preview
 
 | 变量 | 默认值 | 用途 |
 | --- | --- | --- |
+| `PUSH_CHANNELS` | `wxpusher` | 启用的推送通道，逗号分隔：`wxpusher,email,feishu` |
 | `WXPUSHER_APP_TOKEN` | 无 | WxPusher AppToken，实际推送时必填 |
 | `WXPUSHER_UID` | 无 | UID，多个值用英文逗号分隔 |
 | `WXPUSHER_TOPIC_IDS` | 无 | Topic ID，多个值用英文逗号分隔 |
+| `EMAIL_SMTP_HOST` | `smtp.qq.com` | SMTP 服务器地址 |
+| `EMAIL_SMTP_PORT` | `465` | SMTP 端口 |
+| `EMAIL_SMTP_SSL` | `true` | `false` 时改用 STARTTLS（建议配 587 端口） |
+| `EMAIL_SMTP_USER` | 无 | 发件邮箱，email 通道启用时必填 |
+| `EMAIL_SMTP_AUTH_CODE` | 无 | SMTP 授权码，email 通道启用时必填 |
+| `EMAIL_TO` | 无 | 收件邮箱，多个用英文逗号分隔 |
+| `EMAIL_FROM` | 同 USER | 可选，覆盖显示的发件地址 |
+| `FEISHU_WEBHOOK_URL` | 无 | 飞书自定义机器人 Webhook，feishu 通道启用时必填 |
+| `FEISHU_SECRET` | 无 | 飞书签名密钥，启用签名校验时填 |
 | `CONTENT_MODE` | `full` | `full` 完整内容，`summary` 摘要模式 |
 | `RSS_URL` | 大黑 AI RSS | RSS 地址 |
 | `STATE_FILE` | `data/state.json` | 去重状态文件 |
@@ -321,13 +379,14 @@ python -m scripts.preview
 ```text
 DaheiAIPusher/
 ├── .github/workflows/push.yml   # 定时打工人
-├── data/state.json              # 记住上次推到哪了
+├── data/state.json              # 记住每条通道各推到哪了
 ├── scripts/preview.py           # 本地预览消息样式
 ├── src/
+│   ├── channels/                # 推送通道：wxpusher / email / feishu
 │   ├── feed.py                  # 读取和解析 RSS
-│   ├── main.py                  # 主流程
-│   ├── state.py                 # 状态读写
-│   └── wxpusher.py              # 消息排版与推送
+│   ├── main.py                  # 主流程：按通道编排推送
+│   ├── render.py                # 消息排版（HTML 卡片与结构化条目）
+│   └── state.py                 # 状态读写（按通道记录游标）
 └── tests/                       # 防止“改一行，坏一片”
 ```
 

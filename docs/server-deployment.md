@@ -127,6 +127,36 @@ curl -fsSL https://raw.githubusercontent.com/King52HerTz/DaheiAIPusher/main/scri
 - `/etc/dahei-ai-pusher.env` 中的 AppToken；
 - `/var/lib/dahei-ai-pusher/state.json` 中的去重状态。
 
+## 启用 QQ 邮箱与飞书通道
+
+在服务器上编辑 `/etc/dahei-ai-pusher.env`，增加以下内容（按需选择）：
+
+```bash
+# 启用哪些通道：wxpusher,email,feishu（默认只有 wxpusher，行为与之前完全一致）
+PUSH_CHANNELS='wxpusher,email,feishu'
+
+# ── QQ 邮箱通道 ──
+EMAIL_SMTP_USER='你的QQ邮箱@qq.com'
+# 授权码在 QQ 邮箱「设置 → 账号 → 开启 SMTP 服务」后生成，不是 QQ 登录密码
+EMAIL_SMTP_AUTH_CODE='你的授权码'
+EMAIL_TO='收件邮箱@qq.com'
+
+# ── 飞书通道 ──
+# 群设置 → 群机器人 → 添加自定义机器人（安全设置建议选「签名校验」）
+FEISHU_WEBHOOK_URL='https://open.feishu.cn/open-apis/bot/v2/hook/xxx'
+FEISHU_SECRET='签名密钥'
+```
+
+保存后执行 `systemctl start dahei-ai-pusher.service` 立即运行一次，并在
+`journalctl -u dahei-ai-pusher.service -n 50 --no-pager` 中确认各通道输出。
+
+建议的分通道验收方式（不会打扰 WxPusher 主题订阅者）：
+
+1. 临时把 `PUSH_CHANNELS` 改为 `'email'`，并临时追加 `FORCE_PUSH_LATEST='true'`，
+   运行一次后**删除** `FORCE_PUSH_LATEST`——只有邮箱会收到重发的一期；
+2. 同样方式单独验证 `feishu`；
+3. 都通过后恢复 `PUSH_CHANNELS='wxpusher,email,feishu'`。
+
 ## 暂停和重新开启推送
 
 长期暂停服务器的自动检查：

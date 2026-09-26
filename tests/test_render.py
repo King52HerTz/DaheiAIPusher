@@ -1,7 +1,7 @@
 import unittest
 
 from src.feed import FeedItem
-from src.render import build_message, parse_news
+from src.render import build_message, build_text_message, parse_news
 
 
 def make_item(**overrides) -> FeedItem:
@@ -92,6 +92,40 @@ class RenderTests(unittest.TestCase):
         message = build_message(item)
         self.assertIn("超长降级摘要", message.content)
         self.assertLessEqual(len(message.content), 40_000)
+
+
+class TextMessageTests(unittest.TestCase):
+    def test_text_message_contains_sections_and_sources(self):
+        item = make_item(
+            guid="issue-2",
+            title="第1496期 - 2026-07-16 00:01",
+            link="https://example.com/issue-2",
+            content_html=(
+                "<h3>速报总结</h3><p>本期重点内容</p>"
+                "<ul><li>"
+                "<strong>[模型动态] 新模型正式发布</strong><br/>模型能力显著提升。"
+                "<br/><small>来源：<a href='https://source.example'>官方</a></small>"
+                "</li></ul>"
+            ),
+        )
+        text = build_text_message(item)
+        self.assertIn("⚡ 大黑AI速报 · 第 1496 期", text)
+        self.assertIn("◆ AI 总结", text)
+        self.assertIn("本期重点内容", text)
+        self.assertIn("【模型动态】", text)
+        self.assertIn("1. 新模型正式发布", text)
+        self.assertIn("来源：官方 https://source.example", text)
+        self.assertIn("去原网页看完整速报：https://example.com/issue-2", text)
+
+    def test_text_summary_mode_skips_sections(self):
+        item = make_item(content_html="<ul><li><strong>[模型动态] 标题</strong><br/>正文</li></ul>")
+        text = build_text_message(item, content_mode="summary")
+        self.assertNotIn("【", text)
+        self.assertIn("◆ AI 总结", text)
+
+    def test_text_message_is_deterministic(self):
+        item = make_item()
+        self.assertEqual(build_text_message(item), build_text_message(item))
 
 
 if __name__ == "__main__":

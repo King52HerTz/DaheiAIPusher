@@ -7,6 +7,7 @@ from typing import Any
 from .base import PushChannel, PushError
 from .email import EmailChannel
 from .feishu import FeishuChannel
+from .qq import QQBotChannel
 from .wxpusher import WxPusherChannel
 
 
@@ -14,6 +15,7 @@ CHANNELS: dict[str, Any] = {
     "wxpusher": WxPusherChannel,
     "email": EmailChannel,
     "feishu": FeishuChannel,
+    "qq": QQBotChannel,
 }
 CHANNEL_NAMES = tuple(CHANNELS)
 

@@ -258,3 +258,48 @@ def build_message(item: FeedItem, *, content_mode: str = "full") -> PushMessage:
         content=full_content,
         url=item.link,
     )
+
+
+def _text_summary(text: str) -> str:
+    plain = BeautifulSoup(text or "", "html.parser").get_text(" ", strip=True)
+    return plain or "（本期无摘要）"
+
+
+def _text_entry_description(entry: NewsEntry) -> str:
+    return BeautifulSoup(entry.description, "html.parser").get_text(" ", strip=True)
+
+
+def build_text_message(item: FeedItem, *, content_mode: str = "full") -> str:
+    """Compact plain-text issue for channels that cannot render HTML (e.g. QQ group bots)."""
+    content_mode = content_mode.strip().lower()
+    if content_mode not in {"full", "summary"}:
+        raise ValueError("CONTENT_MODE 只能是 full 或 summary")
+
+    summary_text, entries = parse_news(item)
+    lines: list[str] = [
+        f"⚡ 大黑AI速报 · {issue_meta(item)}",
+        "",
+        "◆ AI 总结",
+        _text_summary(summary_text),
+    ]
+
+    if content_mode == "full" and entries:
+        groups: dict[str, list[NewsEntry]] = {}
+        for entry in entries:
+            groups.setdefault(entry.category, []).append(entry)
+        category_rank = {name: index for index, name in enumerate(CATEGORY_ORDER)}
+        for category in sorted(groups, key=lambda name: category_rank.get(name, len(CATEGORY_ORDER))):
+            lines.append("")
+            lines.append(f"【{category}】")
+            for entry in groups[category]:
+                lines.append(f"{entry.index}. {entry.title}")
+                description = _text_entry_description(entry)
+                if description:
+                    lines.append(description)
+                if entry.source_url:
+                    source_name = entry.source_name or "查看信源"
+                    lines.append(f"来源：{source_name} {entry.source_url}")
+
+    lines.append("")
+    lines.append(f"去原网页看完整速报：{item.link}")
+    return "\n".join(lines).strip()

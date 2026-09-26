@@ -1,20 +1,36 @@
-"""WxPusher delivery client. Rendering lives in :mod:`src.render`."""
+"""WxPusher channel: API client plus the channel adapter."""
 
 from __future__ import annotations
+
+import os
 
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-from .render import PushMessage, build_message  # noqa: F401 (re-exported)
+from ..feed import FeedItem
+from ..render import PushMessage, build_message
+from .base import PushError
 
 
 WXPUSHER_API_URL = "https://wxpusher.zjiecode.com/api/send/message"
 MAX_WXPUSHER_CONTENT_LENGTH = 40_000
 
 
-class PushError(RuntimeError):
-    """Raised when WxPusher does not accept a message."""
+def env_topic_ids(name: str) -> list[int]:
+    values: list[int] = []
+    for part in (os.getenv(name) or "").split(","):
+        part = part.strip()
+        if not part:
+            continue
+        try:
+            topic_id = int(part)
+        except ValueError as exc:
+            raise ValueError(f"{name} 必须是用英文逗号分隔的正整数") from exc
+        if topic_id <= 0:
+            raise ValueError(f"{name} 必须是用英文逗号分隔的正整数")
+        values.append(topic_id)
+    return values
 
 
 class WxPusherClient:
@@ -97,3 +113,27 @@ class WxPusherClient:
                 for result in failed
             )
             raise PushError(f"部分接收者推送失败: {details}")
+
+
+class WxPusherChannel:
+    name = "wxpusher"
+
+    def __init__(self, client: WxPusherClient) -> None:
+        self.client = client
+
+    @classmethod
+    def from_env(cls, *, connect_timeout: float = 8, read_timeout: float = 15) -> "WxPusherChannel":
+        app_token = (os.getenv("WXPUSHER_APP_TOKEN") or "").strip()
+        uids = [part.strip() for part in (os.getenv("WXPUSHER_UID") or "").split(",") if part.strip()]
+        topic_ids = env_topic_ids("WXPUSHER_TOPIC_IDS")
+        client = WxPusherClient(
+            app_token,
+            uids,
+            topic_ids,
+            connect_timeout=connect_timeout,
+            read_timeout=read_timeout,
+        )
+        return cls(client)
+
+    def send(self, item: FeedItem, *, content_mode: str) -> None:
+        self.client.send(build_message(item, content_mode=content_mode))

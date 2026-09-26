@@ -9,7 +9,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from src.feed import fetch_feed
-from src.wxpusher import build_message
+from src.render import build_message
 
 
 def main() -> None:

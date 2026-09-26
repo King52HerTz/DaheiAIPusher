@@ -145,6 +145,12 @@ EMAIL_TO='收件邮箱@qq.com'
 # 群设置 → 群机器人 → 添加自定义机器人（安全设置建议选「签名校验」）
 FEISHU_WEBHOOK_URL='https://open.feishu.cn/open-apis/bot/v2/hook/xxx'
 FEISHU_SECRET='签名密钥'
+
+# ── QQ 官方群机器人通道 ──
+# AppID/AppSecret 来自 https://q.qq.com；群 openid 用本地脚本采集（见 README）
+QQ_BOT_APP_ID=''
+QQ_BOT_APP_SECRET=''
+QQ_BOT_GROUP_OPENIDS=''
 ```
 
 保存后执行 `systemctl start dahei-ai-pusher.service` 立即运行一次，并在
@@ -154,8 +160,8 @@ FEISHU_SECRET='签名密钥'
 
 1. 临时把 `PUSH_CHANNELS` 改为 `'email'`，并临时追加 `FORCE_PUSH_LATEST='true'`，
    运行一次后**删除** `FORCE_PUSH_LATEST`——只有邮箱会收到重发的一期；
-2. 同样方式单独验证 `feishu`；
-3. 都通过后恢复 `PUSH_CHANNELS='wxpusher,email,feishu'`。
+2. 同样方式单独验证 `feishu` 和 `qq`；
+3. 都通过后恢复 `PUSH_CHANNELS='wxpusher,email,feishu,qq'`。
 
 ## 暂停和重新开启推送
 

@@ -122,6 +122,7 @@ Settings → Secrets and variables → Actions
 | `PUSH_CHANNELS` | Variables，逗号分隔的通道列表，如 `wxpusher,email,feishu`；不设置时默认只有 `wxpusher` |
 | `EMAIL_SMTP_USER` / `EMAIL_SMTP_AUTH_CODE` / `EMAIL_TO` | QQ 邮箱通道：发件邮箱、授权码、收件邮箱 |
 | `FEISHU_WEBHOOK_URL` / `FEISHU_SECRET` | 飞书通道：群自定义机器人地址与签名密钥 |
+| `QQ_BOT_APP_ID` / `QQ_BOT_APP_SECRET` / `QQ_BOT_GROUP_OPENIDS` | QQ 官方群机器人通道：开放平台凭证与群 openid |
 
 > [!CAUTION]
 > AppToken 不能发给别人，不能提交到代码，也不要截图发到 Issue。泄漏后别人可以顶着你的应用名义发消息，场面可能比实验课忘记保存代码更难收拾。
@@ -202,6 +203,22 @@ FEISHU_SECRET = 签名密钥
 ```
 
 飞书收到的不是大段文字，而是一张可交互的消息卡片：AI 总结、分类分组、编号条目和信源链接都在卡片里，底部按钮可以直接跳转原网页。内容超长时会自动降级为摘要卡片。
+
+### QQ 官方群机器人通道
+
+需要先在 [QQ 开放平台](https://q.qq.com) 注册开发者并创建机器人（个人主体可注册）：
+
+1. 创建机器人后拿到 `AppID` 和 `AppSecret`；
+2. 把机器人添加进你的 QQ 群，然后在群里 @机器人 说一句话，用项目自带的采集脚本抓取**群 openid**（它不是群号，只能从机器人收到的事件里拿到）；
+3. 配置以下变量：
+
+```text
+QQ_BOT_APP_ID = 你的AppID
+QQ_BOT_APP_SECRET = 你的AppSecret
+QQ_BOT_GROUP_OPENIDS = 群openid（多个用英文逗号分隔）
+```
+
+两点注意：主动消息（机器人没被 @ 也往群里发）需要在开放平台申请额度，未开通时消息会被拒绝；QQ 机器人不支持 HTML 卡片，收到的是纯文本速报，超长会自动降级为摘要版。
 
 ### 服务器上启用
 
@@ -364,6 +381,9 @@ python -m scripts.preview
 | `EMAIL_FROM` | 同 USER | 可选，覆盖显示的发件地址 |
 | `FEISHU_WEBHOOK_URL` | 无 | 飞书自定义机器人 Webhook，feishu 通道启用时必填 |
 | `FEISHU_SECRET` | 无 | 飞书签名密钥，启用签名校验时填 |
+| `QQ_BOT_APP_ID` | 无 | QQ 开放平台 AppID，qq 通道启用时必填 |
+| `QQ_BOT_APP_SECRET` | 无 | QQ 开放平台 AppSecret，qq 通道启用时必填 |
+| `QQ_BOT_GROUP_OPENIDS` | 无 | 群 openid，多个用英文逗号分隔 |
 | `CONTENT_MODE` | `full` | `full` 完整内容，`summary` 摘要模式 |
 | `RSS_URL` | 大黑 AI RSS | RSS 地址 |
 | `STATE_FILE` | `data/state.json` | 去重状态文件 |
@@ -382,7 +402,7 @@ DaheiAIPusher/
 ├── data/state.json              # 记住每条通道各推到哪了
 ├── scripts/preview.py           # 本地预览消息样式
 ├── src/
-│   ├── channels/                # 推送通道：wxpusher / email / feishu
+│   ├── channels/                # 推送通道：wxpusher / email / feishu / qq
 │   ├── feed.py                  # 读取和解析 RSS
 │   ├── main.py                  # 主流程：按通道编排推送
 │   ├── render.py                # 消息排版（HTML 卡片与结构化条目）

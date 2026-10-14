@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1200" height="380" viewBox="0 0 1200 380"
+     role="img" aria-labelledby="title desc">
+  <title id="title">大黑 AI 速报自动推送</title>
+  <desc id="desc">读取大黑 AI 速报官方 RSS，发现新一期后自动推送到手机或群聊，不需要守着网页刷新。</desc>
+
+  <rect width="1200" height="380" rx="24" fill="#faf9f6"/>
+  <path d="M24 32v316" stroke="#ee6b12" stroke-width="5" stroke-linecap="round"/>
+
+  <g id="title-block">
+    <text x="66" y="75" fill="#ee6b12"
+          font-family="ui-monospace,SFMono-Regular,Menlo,monospace"
+          font-size="18" font-weight="700" letter-spacing="1.4">DAHEI AI BRIEF · RSS AUTO PUSH</text>
+    <text x="64" y="158" fill="#191817"
+          font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif"
+          font-size="58" font-weight="800">大黑更新了？</text>
+    <text x="64" y="226" fill="#ee6b12"
+          font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif"
+          font-size="54" font-weight="800">消息自己来。</text>
+    <text x="66" y="279" fill="#625d56"
+          font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif"
+          font-size="25">发现新一期后自动推送，没更新就安静值班。</text>
+    <text x="66" y="328" fill="#746f68"
+          font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif"
+          font-size="21" font-weight="600">WxPusher  ·  QQ 群  ·  飞书  ·  邮箱</text>
+  </g>
+
+  <g id="rss-source">
+    <rect x="662" y="110" width="150" height="168" rx="18" fill="#ffffff" stroke="#e4ddd4" stroke-width="2"/>
+    <rect x="662" y="110" width="150" height="7" rx="3.5" fill="#ee6b12"/>
+    <path d="M697 164a48 48 0 0 1 48 48M697 182a30 30 0 0 1 30 30M697 202a10 10 0 1 1 0 20"
+          fill="none" stroke="#ee6b12" stroke-width="7" stroke-linecap="round"/>
+    <text x="688" y="252" fill="#191817"
+          font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif"
+          font-size="23" font-weight="800">官方 RSS</text>
+  </g>
+
+  <path d="M822 194h34m-10-10 10 10-10 10" fill="none" stroke="#c9bfb2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <g id="push-card">
+    <rect x="870" y="76" width="280" height="236" rx="20" fill="#ffffff" stroke="#e4ddd4" stroke-width="2"/>
+    <circle cx="900" cy="109" r="6" fill="#ee6b12"/>
+    <text x="918" y="116" fill="#746f68"
+          font-family="ui-monospace,SFMono-Regular,Menlo,monospace"
+          font-size="17" font-weight="700" letter-spacing=".7">新一期已送达</text>
+    <path d="M894 139h232" stroke="#eee9e2" stroke-width="2"/>
+    <text x="894" y="181" fill="#191817"
+          font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif"
+          font-size="27" font-weight="800">大黑 AI 速报</text>
+    <text x="894" y="216" fill="#625d56"
+          font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif"
+          font-size="20">摘要、栏目和信源链接</text>
+    <rect x="894" y="240" width="154" height="42" rx="10" fill="#fff2e7"/>
+    <text x="909" y="267" fill="#a94a08"
+          font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif"
+          font-size="19" font-weight="700">点开看原文 ↗</text>
+  </g>
+</svg>

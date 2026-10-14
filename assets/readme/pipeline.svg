@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1200" height="420" viewBox="0 0 1200 420"
+     role="img" aria-labelledby="title desc">
+  <title id="title">大黑 AI 速报自动推送流程</title>
+  <desc id="desc">官方 RSS 经过 GitHub Actions 或 Linux 服务器定时检查，再按 GUID 去重、排版并推送到 WxPusher、QQ、飞书或邮箱。</desc>
+  <rect width="1200" height="420" rx="24" fill="#faf9f6"/>
+
+  <text x="52" y="58" fill="#191817" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif" font-size="31" font-weight="800">一份 RSS，自动送到你常用的地方</text>
+  <text x="54" y="91" fill="#746f68" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif" font-size="20">Actions 适合免服务器自部署；Linux 服务器适合稳定值班。</text>
+
+  <g id="rss-source">
+    <rect x="48" y="130" width="220" height="200" rx="18" fill="#ffffff" stroke="#e4ddd4" stroke-width="2"/>
+    <rect x="48" y="130" width="220" height="7" rx="3.5" fill="#ee6b12"/>
+    <text x="70" y="171" fill="#ee6b12" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="17" font-weight="700" letter-spacing="1">01 · SOURCE</text>
+    <path d="M73 219a35 35 0 0 1 35 35M73 233a21 21 0 0 1 21 21M73 249a5 5 0 1 1 0 10" fill="none" stroke="#ee6b12" stroke-width="5" stroke-linecap="round"/>
+    <text x="124" y="232" fill="#191817" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif" font-size="25" font-weight="800">官方 RSS</text>
+    <text x="70" y="294" fill="#746f68" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif" font-size="19">每期都有 GUID</text>
+  </g>
+
+  <path d="M278 230h28m-8-8 8 8-8 8" fill="none" stroke="#d7cfc5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <g id="scheduler">
+    <rect x="316" y="130" width="235" height="200" rx="18" fill="#ffffff" stroke="#e4ddd4" stroke-width="2"/>
+    <rect x="316" y="130" width="235" height="7" rx="3.5" fill="#ee6b12"/>
+    <text x="338" y="171" fill="#ee6b12" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="17" font-weight="700" letter-spacing="1">02 · SCHEDULE</text>
+    <text x="338" y="211" fill="#191817" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif" font-size="24" font-weight="800">定时检查</text>
+    <rect x="338" y="229" width="190" height="34" rx="8" fill="#fff2e7"/>
+    <text x="350" y="253" fill="#a94a08" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif" font-size="18" font-weight="650">GitHub · 每 20 分</text>
+    <rect x="338" y="273" width="190" height="34" rx="8" fill="#f3f1ee"/>
+    <text x="350" y="297" fill="#4d4944" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif" font-size="18" font-weight="650">服务器 · 每 15 分</text>
+  </g>
+
+  <path d="M561 230h28m-8-8 8 8-8 8" fill="none" stroke="#d7cfc5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <g id="process">
+    <rect x="599" y="130" width="300" height="200" rx="18" fill="#ffffff" stroke="#e4ddd4" stroke-width="2"/>
+    <rect x="599" y="130" width="300" height="7" rx="3.5" fill="#191817"/>
+    <text x="621" y="171" fill="#746f68" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="17" font-weight="700" letter-spacing="1">03 · PROCESS</text>
+    <text x="621" y="211" fill="#191817" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif" font-size="24" font-weight="800">发现更新后再动手</text>
+    <text x="621" y="249" fill="#4d4944" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif" font-size="19">解析内容 · GUID 去重</text>
+    <text x="621" y="279" fill="#4d4944" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif" font-size="19">排版消息 · 分通道记录</text>
+    <text x="621" y="309" fill="#746f68" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif" font-size="18">发送成功后才推进状态</text>
+  </g>
+
+  <path d="M909 230h28m-8-8 8 8-8 8" fill="none" stroke="#d7cfc5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <g id="channels">
+    <rect x="947" y="130" width="205" height="200" rx="18" fill="#ffffff" stroke="#e4ddd4" stroke-width="2"/>
+    <rect x="947" y="130" width="205" height="7" rx="3.5" fill="#ee6b12"/>
+    <text x="969" y="171" fill="#ee6b12" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="17" font-weight="700" letter-spacing="1">04 · DELIVER</text>
+    <text x="969" y="208" fill="#191817" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif" font-size="23" font-weight="800">送到你的渠道</text>
+    <circle cx="978" cy="238" r="4" fill="#ee6b12"/><text x="991" y="245" fill="#4d4944" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif" font-size="19">WxPusher</text>
+    <circle cx="978" cy="265" r="4" fill="#ee6b12"/><text x="991" y="272" fill="#4d4944" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif" font-size="19">QQ 群</text>
+    <circle cx="978" cy="292" r="4" fill="#ee6b12"/><text x="991" y="299" fill="#4d4944" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif" font-size="19">飞书 · 邮箱</text>
+  </g>
+
+  <path d="M52 358h1100" stroke="#e4ddd4" stroke-width="2"/>
+  <circle cx="62" cy="389" r="5" fill="#ee6b12"/>
+  <text x="79" y="396" fill="#5e5851" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif" font-size="19">没更新就安静退出</text>
+  <circle cx="386" cy="389" r="5" fill="#ee6b12"/>
+  <text x="403" y="396" fill="#5e5851" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif" font-size="19">失败留给下一轮重试</text>
+  <circle cx="760" cy="389" r="5" fill="#ee6b12"/>
+  <text x="777" y="396" fill="#5e5851" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif" font-size="19">避免重复推送</text>
+</svg>

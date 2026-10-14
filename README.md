@@ -1,368 +1,160 @@
-# 大黑 AI 速报推送 ⚡
-
-> 一个把大黑 AI 速报自动送到手机的轻量工具。GitHub Actions 和云服务器都能负责定时运行，我们只管看消息。
-
-[![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-自动推送-2088FF?logo=githubactions&logoColor=white)](https://github.com/King52HerTz/DaheiAIPusher/actions)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-
-事情是这样的：
-
-[大黑 AI 速报](https://news.daheiai.com/)每 4 小时更新一次，但我不可能每 4 小时打开网页刷新——毕竟课还是要上的，觉也是要睡的。
-
-整个流程由三个部分完成：
-
-- RSS：负责告诉我“有新一期了”；
-- GitHub Actions / 云服务器：负责定时起床干活；
-- 推送通道（WxPusher / QQ 群 / 飞书群）：负责把消息送到你手里。
-
-最终效果就是：网站一更新，手机就能收到排版好的 AI 新闻卡片。
-
-## 三种方式订阅，扫码就行
-
-完全合理，配置环境的时间够看好几期速报了。下面三种方式任选其一，都不需要下载代码、不需要 GitHub 账号、更不需要自己搭服务。大黑每 4 小时更新一期，新内容发布后几分钟内就会自动送达。
-
-### 方式一：WxPusher App
-
-WxPusher 是一个独立的推送 App——安卓手机在自带应用商店搜索 **WxPusher**，iPhone 或 iPad 在 **App Store** 搜索 **WxPusher** 安装即可。装好之后扫描下面的二维码，就能关注主题 **「大黑AI速报」**；懒得扫码的话，也可以直接在 WxPusher 里点「免费消息」，搜索 **大黑AI速报**，点订阅，完事。
+<h1 align="center">大黑 AI 速报推送 ⚡</h1>
 
 <p align="center">
-  <img src="https://wxpusher.zjiecode.com/api/qrcode/m5pkKxplAx3CdxLyuhsVtysKe953eGVu1UiicQjPfhwdIE3SIew36Qr7dDL0K4yZ.jpg" width="260" alt="大黑AI速报 Topic 订阅二维码">
+  <img src="assets/readme/hero.svg" width="100%" alt="大黑 AI 速报自动推送主视觉：RSS 有新一期后，自动送到手机或群聊">
 </p>
-
-<p align="center"><strong>扫码订阅，剩下的交给赛博牛马</strong></p>
-
-二维码没有显示？[点这里单独打开](https://wxpusher.zjiecode.com/api/qrcode/m5pkKxplAx3CdxLyuhsVtysKe953eGVu1UiicQjPfhwdIE3SIew36Qr7dDL0K4yZ.jpg)。想取消时，直接在 WxPusher 的订阅管理中取消即可。
-
-订阅之后收到的是什么样子？不是概念图，也不是“最终效果仅供参考”——这是 WxPusher 实际收到的消息详情：栏目和摘要一目了然，橙色的“查看信源”可以直接点击。
 
 <p align="center">
-  <img src="docs/images/wxpusher-push.jpg" width="260" alt="大黑AI速报在 WxPusher 中的实际推送效果">
+  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white" alt="Python 3.12"></a>
+  <a href="https://github.com/King52HerTz/DaheiAIPusher/actions"><img src="https://img.shields.io/badge/GitHub_Actions-可自部署-2088FF?logo=githubactions&logoColor=white" alt="GitHub Actions 可自部署"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT License"></a>
 </p>
 
-### 方式二：QQ 群（群号 1125120360）
+## 只想收消息？扫码就行
 
-QQ 扫描下面的二维码加入「大黑AI速报」群，机器人会把每期速报以纯文本消息发进群里，来源链接直接可点。
+安装 **WxPusher**：安卓手机在应用商店搜索，iPhone / iPad 在 App Store 搜索。打开 App 扫描下方二维码，关注主题「大黑AI速报」。不想扫码，也可以在 WxPusher 的「免费消息」里搜索主题名称。
 
-### 方式三：飞书群（二维码永久有效）
+<p align="center">
+  <a href="https://wxpusher.zjiecode.com/api/qrcode/m5pkKxplAx3CdxLyuhsVtysKe953eGVu1UiicQjPfhwdIE3SIew36Qr7dDL0K4yZ.jpg">
+    <img src="https://wxpusher.zjiecode.com/api/qrcode/m5pkKxplAx3CdxLyuhsVtysKe953eGVu1UiicQjPfhwdIE3SIew36Qr7dDL0K4yZ.jpg" width="220" alt="扫描订阅 WxPusher 主题：大黑AI速报">
+  </a>
+</p>
 
-飞书扫描下面的二维码加入「大黑AI速报群」，每期速报是一张可以点击跳转的消息卡片，AI 总结和分类栏目都在卡里。
+<p align="center"><strong>扫码关注，剩下的交给赛博牛马。</strong></p>
 
-<table align="center">
-  <tr>
-    <th align="center">QQ 群（群号 1125120360）</th>
-    <th align="center">飞书群「大黑AI速报群」</th>
-  </tr>
-  <tr>
-    <td align="center"><img src="docs/images/qq-group-qrcode.jpg" width="230" alt="大黑AI速报 QQ 群二维码"></td>
-    <td align="center"><img src="docs/images/feishu-group-qrcode.jpg" width="230" alt="大黑AI速报 飞书群二维码"></td>
-  </tr>
-</table>
+每期速报发布后，推送程序会定时检查 RSS；发现新内容才会发送。推送到达时间会受检查周期和平台调度影响，没更新时不会打扰你。想退订，去 WxPusher 的订阅管理里取消即可。
 
-### 推送效果实拍
+### 也可以订阅 QQ 群或飞书群
 
-不是概念图，这是同一期速报在两个群里的真实长相：
+QQ：搜索群号 **1125120360**，或用 QQ 扫码。飞书：扫码加入「大黑AI速报群」。建议选一个渠道就好，三边都加的话，手机可能会开小型新闻发布会。
 
-<table align="center">
-  <tr>
-    <th align="center">QQ 群推送效果</th>
-    <th align="center">飞书群推送效果</th>
-  </tr>
-  <tr>
-    <td align="center"><img src="docs/images/qq-group-push.jpg" width="230" alt="QQ 群推送效果"></td>
-    <td align="center"><img src="docs/images/feishu-group-push.jpg" width="230" alt="飞书群推送效果"></td>
-  </tr>
-</table>
+<details>
+<summary>展开查看 QQ 和飞书群二维码</summary>
 
-<p align="center"><sub>一张是 QQ 群的纯文本速报，一张是飞书群的消息卡片，同一期内容，两种皮肤。</sub></p>
+**QQ 群 · 1125120360**
 
-三个通道推送的是同一期内容，重复订阅就会重复响，建议挑一个最顺手的。
+<p align="center"><img src="docs/images/qq-group-qrcode.jpg" width="240" alt="扫描加入大黑AI速报 QQ 群"></p>
 
-以上就是为了收推送需要知道的一切。下面的内容是给想自己动手折腾的开发者准备的——只想躺平收消息的同学，可以下班了。
+**飞书群 · 大黑AI速报群**
 
-## 这个项目做了什么
+<p align="center"><img src="docs/images/feishu-group-qrcode.jpg" width="240" alt="扫描加入大黑AI速报飞书群"></p>
+</details>
 
-```text
-大黑AI速报 RSS
-      ↓
-GitHub Actions / 云服务器定时检查
-      ↓
-GUID 判断是不是新一期
-      ↓
-重新排版成手机新闻卡片
-      ↓
-推送通道（WxPusher / QQ 群 / 飞书群）
-      ↓
-你的手机
-```
+## 推送长什么样
 
-主要功能：
+这是手机里收到的实拍。WxPusher 会显示排版好的新闻卡片和可点击信源；QQ 群发纯文字，飞书群发消息卡片。
 
-- 读取官方 RSS，不拿爬虫在网页上硬刮；
-- 使用每期 GUID 去重，拒绝把同一条新闻反复塞进通知栏；
-- 断更后可以补发，默认最多补 6 期，防止手机突然开始“渡劫”；
-- 支持完整内容和摘要模式；
-- 自动把原始 RSS 排版成摘要区、分类徽标和新闻卡片；
-- 支持 WxPusher、QQ 群机器人、飞书群机器人、QQ 邮箱多通道同时推送，各通道独立去重、互不拖累；
-- 首次运行默认只建立基线，不会把历史消息一股脑倒进手机；
-- 推送失败不会更新状态，下次运行还能继续重试。
+<details>
+<summary>展开看三个渠道的实际效果</summary>
 
-## 开发者说明
+**WxPusher**
 
-从这里开始是给想自己动手折腾的人准备的：Fork 部署、云服务器一键安装、本地调试、更多推送通道、环境变量和项目结构，全都在下面。
+<p align="center"><a href="docs/images/wxpusher-push.jpg"><img src="docs/images/wxpusher-push.jpg" width="240" alt="WxPusher 手机推送实拍，包含 AI 总结、栏目和信源链接"></a></p>
 
-### 我也想自己部署（GitHub Actions）
+**QQ 群**
 
-欢迎进入“明明扫码就能用，但我偏要自己配”的开发者路线。
+<p align="center"><a href="docs/images/qq-group-push.jpg"><img src="docs/images/qq-group-push.jpg" width="240" alt="QQ 群速报推送实拍"></a></p>
 
-### 1. Fork 仓库
+**飞书群**
 
-点击 GitHub 页面右上角的 `Fork`，把项目复制到自己的账号。
+<p align="center"><a href="docs/images/feishu-group-push.jpg"><img src="docs/images/feishu-group-push.jpg" width="240" alt="飞书群速报卡片推送实拍"></a></p>
 
-### 2. 创建 WxPusher 应用
+点图片可以看大图。
+</details>
 
-打开 [WxPusher 后台](https://wxpusher.zjiecode.com/admin/)，创建一个应用并取得：
+## 它是怎么工作的
 
-- `appToken`：应用的发送密钥；
-- `UID`：接收消息的用户标识。
+大黑每四小时左右更新一期，项目读取官方 RSS，不从网页布局里硬抠内容。检查可以跑在 GitHub Actions，也可以跑在自己的 Linux 服务器上。
 
-如果准备给很多人提供统一订阅，可以再创建一个 Topic，使用数字 `topicId` 群发。
+<p align="center">
+  <img src="assets/readme/pipeline.svg" width="100%" alt="大黑 AI 速报从 RSS 经定时检查、GUID 去重和排版后，推送到 WxPusher、QQ 群、飞书群或邮箱的流程图">
+</p>
 
-### 3. 添加 GitHub Secrets
+程序按 GUID 判断是不是新一期；推送成功后才更新该通道的状态，失败则留待下次重试。每个推送通道单独记录进度，所以某个渠道临时出错，不会让其他渠道跟着重复发送。
 
-进入自己的仓库：
+## 功能一览
 
-```text
-Settings → Secrets and variables → Actions
-```
+- 读取大黑 AI 速报官方 RSS，获取标题、摘要、正文和原文链接；
+- 按 GUID 去重，失败重试，落后太多时最多补发 6 期；
+- 将内容整理成适合手机看的卡片，保留原始信源链接；
+- 支持 WxPusher、QQ 官方群机器人、飞书群机器人和 QQ 邮箱；
+- 首次运行默认只建立推送基线，不会把历史速报一次性倒进通知栏；
+- 提供 GitHub Actions 和云服务器两种运行方式。
 
-至少添加：
+## 想自己部署？
 
-| Secret | 填什么 |
-| --- | --- |
-| `WXPUSHER_APP_TOKEN` | 你的 `AT_...` |
+按电脑开机积极程度二选一：有 GitHub 账号就用 Actions；有 Ubuntu / Debian 服务器就让它 24 小时值班。默认使用 WxPusher；也可以只启用邮箱、飞书或 QQ 等其他通道。
 
-再根据使用方式添加至少一个接收目标：
+### GitHub Actions：不用服务器
 
-| Secret | 适用场景 |
-| --- | --- |
-| `WXPUSHER_UID` | 给自己或指定用户发送，多个 UID 用英文逗号分隔 |
-| `WXPUSHER_TOPIC_IDS` | Topic 群发，多个数字 ID 用英文逗号分隔 |
+1. Fork 本仓库。
+2. 在 WxPusher 后台创建应用，准备 `AppToken`。给自己发消息用 UID；想让多人关注，用 Topic ID。
+3. 在仓库的 `Settings → Secrets and variables → Actions` 添加：
 
-两者可以同时配置，但不能同时留空。
+   | 类型 | 名称 | 用途 |
+   | --- | --- | --- |
+   | Secret | `WXPUSHER_APP_TOKEN` | WxPusher 应用密钥 |
+   | Secret | `WXPUSHER_UID` | 接收者 UID，可选 |
+   | Secret | `WXPUSHER_TOPIC_IDS` | Topic ID，可选 |
 
-想同时用 QQ 邮箱或飞书接收，再按需添加（只在 `PUSH_CHANNELS` 启用了对应通道时才必填）：
+   默认启用 WxPusher 时，AppToken 必填，UID 和 Topic 至少配置一个。启用其他通道时，按需补充对应的 Secret，见下方「额外推送通道」。
 
-| Secret / Variable | 适用场景 |
-| --- | --- |
-| `PUSH_CHANNELS` | Variables，逗号分隔的通道列表，如 `wxpusher,email,feishu`；不设置时默认只有 `wxpusher` |
-| `EMAIL_SMTP_USER` / `EMAIL_SMTP_AUTH_CODE` / `EMAIL_TO` | QQ 邮箱通道：发件邮箱、授权码、收件邮箱 |
-| `FEISHU_WEBHOOK_URL` / `FEISHU_SECRET` | 飞书通道：群自定义机器人地址与签名密钥 |
-| `QQ_BOT_APP_ID` / `QQ_BOT_APP_SECRET` / `QQ_BOT_GROUP_OPENIDS` | QQ 官方群机器人通道：开放平台凭证与群 openid |
+4. 打开 `Settings → Actions → General → Workflow permissions`，选择 `Read and write permissions`，让工作流保存每个通道的推送进度。
+5. 在 `Actions → Dahei AI News Push → Run workflow` 手动运行一次。可先选 `dry_run` 检查，不会真正推送。
 
-> [!CAUTION]
-> AppToken 不能发给别人，不能提交到代码，也不要截图发到 Issue。泄漏后别人可以顶着你的应用名义发消息，场面可能比实验课忘记保存代码更难收拾。
+工作流大约每 20 分钟检查一次。GitHub Actions 的定时任务有时会延迟；[官方说明](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)提到高负载时可能排队或丢弃，所以它不是精准闹钟。程序会通过去重和后续检查减少漏发与重复。
 
-### 4. 开启 Actions 写入权限
+### 云服务器：一键安装
 
-进入：
-
-```text
-Settings → Actions → General → Workflow permissions
-```
-
-选择：
-
-```text
-Read and write permissions
-```
-
-程序需要更新 `data/state.json`，用它记住最后推送到了哪一期。
-
-### 5. 第一次运行
-
-打开：
-
-```text
-Actions → Dahei AI News Push → Run workflow
-```
-
-选项说明：
-
-- `dry_run`：只检查，不发送，也不修改状态；
-- `push_on_first_run`：第一次就发送当前最新一期；
-- `force_push_latest`：无论是否推送过，都重新发送最新一期；适合测试排版，但 Topic 订阅者也会收到；
-- `content_mode`：选择完整内容 `full` 或摘要 `summary`。
-
-第一次测试建议：
-
-```text
-dry_run: false
-push_on_first_run: true
-content_mode: full
-```
-
-看到绿色对勾先别急着开香槟：它代表脚本执行成功。手机是否弹通知，还要确认自己确实订阅了对应 Topic，并开启了系统通知权限。
-
-### 推送通道配置：WxPusher、飞书、QQ 群机器人、QQ 邮箱
-
-除了 WxPusher，还可以把同一期速报同时送进飞书群、QQ 群和 QQ 邮箱（邮箱没有群聊那种"自助进群"的体验，更适合自己留档或发给指定的人）。用 `PUSH_CHANNELS` 控制启用哪些通道：
-
-```text
-PUSH_CHANNELS = wxpusher,email,feishu,qq
-```
-
-不设置时默认只有 `wxpusher`，行为与之前完全一致。每个通道的去重状态相互独立：某一路失败不会影响其他路，也不会导致重复推送。
-
-### QQ 邮箱通道
-
-1. 在 QQ 邮箱网页版进入 `设置 → 账号`，开启「IMAP/SMTP 服务」，按提示生成**授权码**（不是 QQ 登录密码）；
-2. 配置以下变量：
-
-```text
-EMAIL_SMTP_USER = 你的QQ邮箱@qq.com
-EMAIL_SMTP_AUTH_CODE = 你的授权码
-EMAIL_TO = 收件邮箱@qq.com          # 多个收件人用英文逗号分隔
-```
-
-可选：`EMAIL_SMTP_HOST/PORT/SSL` 可换成其他邮箱服务商（默认 `smtp.qq.com:465` SSL）。邮件正文直接复用 WxPusher 的那份排版卡片，第一封邮件如果进了垃圾箱，手动加白名单即可。
-
-### 飞书通道
-
-1. 建一个飞书群（自建的群即可），进入 `群设置 → 群机器人 → 添加自定义机器人`；
-2. 安全设置选择**签名校验**，记下 `签名密钥`，完成创建后复制机器人 `Webhook 地址`；
-3. 配置以下变量：
-
-```text
-FEISHU_WEBHOOK_URL = https://open.feishu.cn/open-apis/bot/v2/hook/xxxx
-FEISHU_SECRET = 签名密钥
-```
-
-飞书收到的不是大段文字，而是一张可交互的消息卡片：AI 总结、分类分组、编号条目和信源链接都在卡片里，底部按钮可以直接跳转原网页。内容超长时会自动降级为摘要卡片。
-
-### QQ 官方群机器人通道
-
-需要先在 [QQ 开放平台](https://q.qq.com) 注册开发者并创建机器人（个人主体可注册）：
-
-1. 创建机器人后拿到 `AppID` 和 `AppSecret`；
-2. 把机器人添加进你的 QQ 群，然后在群里 @机器人 说一句话，从机器人收到的事件里抓取**群 openid**（它不是群号，只能从事件里拿；采集脚本没有随仓库分发，有需要提 Issue 找我要）；
-3. 配置以下变量：
-
-```text
-QQ_BOT_APP_ID = 你的AppID
-QQ_BOT_APP_SECRET = 你的AppSecret
-QQ_BOT_GROUP_OPENIDS = 群openid（多个用英文逗号分隔）
-```
-
-两点注意：主动消息（机器人没被 @ 也往群里发）需要在开放平台申请额度，未开通时消息会被拒绝；QQ 机器人不支持 HTML 卡片，收到的是纯文本速报，超长会自动降级为摘要版。
-
-### 服务器上启用
-
-云服务器部署的用户直接编辑 `/etc/dahei-ai-pusher.env` 加上上述变量即可，详细步骤（含"先单独验证邮箱/飞书、不打扰主题订阅者"的验收方式）见[云服务器完整部署教程](docs/server-deployment.md#启用-qq-邮箱与飞书通道)。
-
-### 什么时候推送
-
-工作流按北京时间全天检查，每小时运行三次：
-
-```text
-每小时的 07、27、47 分
-```
-
-网站通常在北京时间 00、04、08、12、16、20 点更新。工作流不再只押注这些时间附近的两次任务，而是全天每 20 分钟检查一次；即使 GitHub 漏掉一次，后面还有连续补偿检查。发现 GUID 没变就会安静退出，不会重复轰炸。
-
-GitHub Actions 不是高铁时刻表，官方也说明定时任务在高负载时可能延迟甚至被丢弃。所以这里选择“多检查几次但不重复推送”，而不是指望一次 cron 永不迟到。
-
-### 我有云服务器，但我有点懒
-
-巧了，电脑最适合接手这种重复劳动。
-
-Ubuntu / Debian 服务器可以使用一键安装脚本。它会自动安装 Python 环境、保存配置、迁移去重状态，并创建每 15 分钟运行一次的 systemd 定时器：
+Ubuntu / Debian 服务器在终端粘贴这一条：
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/King52HerTz/DaheiAIPusher/main/scripts/install_server.sh \
-  -o /tmp/install-dahei.sh && sudo bash /tmp/install-dahei.sh
+curl -fsSL https://raw.githubusercontent.com/King52HerTz/DaheiAIPusher/main/scripts/install_server.sh -o /tmp/install-dahei.sh && sudo bash /tmp/install-dahei.sh
 ```
 
-运行后只需要输入两个东西：
+如果当前终端已经是 `root` 且没有 `sudo`，把最后的 `sudo bash` 改成 `bash`。安装器会询问 AppToken 和 Topic ID，其余步骤自动完成。服务器每 15 分钟检查一次 RSS，没有更新就安静退出。
 
-- WxPusher `AppToken`，输入时屏幕不会显示；
-- 「大黑AI速报」的数字 `Topic ID`。
+完整步骤、日志查看、更新、暂停和额外通道配置见[云服务器部署教程](docs/server-deployment.md)。
 
-第一次接触服务器也不用慌，命令看起来很长，真正需要你做的只有“复制、粘贴、填写两项”。完整的安装原理、日志查看、更新方法和常见问题都整理在：
-
-**[云服务器完整部署教程](docs/server-deployment.md)**
-
-服务器仍然需要定时询问 RSS“更新了吗”。每 15 分钟检查一次意味着最坏约 15 分钟发现更新；没有新一期时不会调用 WxPusher，更不会给手机发送空气。
-
-常用命令：
-
-```bash
-# 查看定时器
-systemctl list-timers dahei-ai-pusher.timer
-
-# 查看最近日志
-journalctl -u dahei-ai-pusher.service -n 100 --no-pager
-
-# 立即检查一次
-systemctl start dahei-ai-pusher.service
-```
-
-确认服务器连续运行正常后，在自己的 GitHub 仓库添加 Actions Variable：
+服务器确认运行正常后，可以在你自己的 GitHub 仓库中添加 Actions Variable：
 
 ```text
 ENABLE_GITHUB_SCHEDULED_PUSH = false
 ```
 
-这样只会关闭当前仓库的 GitHub 自动排程，`Run workflow` 手动测试仍然保留。其他开发者 Fork 本仓库后，如果不设置这个变量，GitHub Actions 仍会照常定时运行。
+这会关闭该仓库的自动排程，手动 `Run workflow` 仍可用。其他人 Fork 后不设置这个变量，GitHub Actions 仍会照常定时运行。
 
-以后更新服务器代码也不用重新配置 AppToken：
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/King52HerTz/DaheiAIPusher/main/scripts/update_server.sh \
-  -o /tmp/update-dahei.sh && sudo bash /tmp/update-dahei.sh
-```
-
-想让赛博牛马暂时休假，可以长期暂停服务器定时推送：
+暂停和恢复服务器定时任务：
 
 ```bash
-systemctl disable --now dahei-ai-pusher.timer
+systemctl disable --now dahei-ai-pusher.timer  # 暂停
+systemctl enable --now dahei-ai-pusher.timer   # 恢复
 ```
 
-确认是否已经停止：
+### 额外推送通道
 
-```bash
-systemctl is-enabled dahei-ai-pusher.timer
-systemctl is-active dahei-ai-pusher.timer
-```
-
-重新开工：
-
-```bash
-systemctl enable --now dahei-ai-pusher.timer
-```
-
-暂停定时器不会删除 AppToken、代码或去重状态。如果 GitHub 自动排程也处于关闭状态，那么暂停服务器定时器后，公开主题将暂时不再收到新一期推送。更多说明见[云服务器完整部署教程](docs/server-deployment.md#暂停和重新开启推送)。
-
-### 完整模式和摘要模式
-
-默认使用：
+默认只启用 WxPusher。要添加邮箱、飞书或 QQ 群机器人，在 GitHub 仓库的 **Variables** 中设置 `PUSH_CHANNELS`；凭据放 **Secrets**。例如：
 
 ```text
-CONTENT_MODE = full
+PUSH_CHANNELS = wxpusher,email,feishu,qq
 ```
 
-- `full`：发送完整内容，并重新排版成适合手机阅读的卡片；
-- `summary`：只发送标题、摘要和原文链接。
+<details>
+<summary>查看各通道需要的配置</summary>
 
-如果希望定时任务长期使用摘要模式，在仓库的 Actions Variables 中添加：
+| 通道 | Secret / Variable | 说明 |
+| --- | --- | --- |
+| QQ 邮箱 | `EMAIL_SMTP_USER`、`EMAIL_SMTP_AUTH_CODE`、`EMAIL_TO` | SMTP 发件账号、授权码、收件地址；QQ 邮箱需要 SMTP 授权码，不是登录密码 |
+| 飞书 | `FEISHU_WEBHOOK_URL`、`FEISHU_SECRET` | 自定义机器人 Webhook 和可选签名密钥 |
+| QQ 群机器人 | `QQ_BOT_APP_ID`、`QQ_BOT_APP_SECRET`、`QQ_BOT_GROUP_OPENIDS` | QQ 开放平台凭据与群 openid；openid 不是群号 |
 
-```text
-CONTENT_MODE = summary
-```
+QQ 群 openid 可按[开发脚本说明](scripts/dev/listen_qq.py)采集。服务器上配置这些通道的方法见[服务器教程](docs/server-deployment.md#启用-qq-邮箱与飞书通道)。
 
-### 本地运行
+</details>
 
-推荐 Python 3.12 或更高版本。
+## 本地运行与预览
+
+需要 Python 3.12 或更高版本：
 
 ```powershell
 python -m venv .venv
@@ -370,116 +162,79 @@ python -m venv .venv
 pip install -r requirements.txt
 
 $env:WXPUSHER_APP_TOKEN = "AT_xxx"
-$env:WXPUSHER_UID = "UID_xxx"
-
-python -m src.main
-```
-
-Topic 群发：
-
-```powershell
-$env:WXPUSHER_APP_TOKEN = "AT_xxx"
 $env:WXPUSHER_TOPIC_IDS = "123456"
 python -m src.main
 ```
 
-只检查、不发送：
+只想检查 RSS、不发送消息：
 
 ```powershell
 $env:DRY_RUN = "true"
 python -m src.main
 ```
 
-### 本地预览消息样式
-
-不想每改一次 CSS 就给手机发一条测试消息，可以先生成浏览器预览：
+本地预览排版：
 
 ```powershell
 python -m scripts.preview
 ```
 
-然后打开项目根目录下的 `preview.html`。前端调样式最重要的经验之一：能在本地解决的，不要拿生产环境许愿。
+## 环境变量
 
-### 环境变量
+<details>
+<summary>查看完整配置项</summary>
 
 | 变量 | 默认值 | 用途 |
 | --- | --- | --- |
-| `PUSH_CHANNELS` | `wxpusher` | 启用的推送通道，逗号分隔：`wxpusher,email,feishu` |
-| `WXPUSHER_APP_TOKEN` | 无 | WxPusher AppToken，实际推送时必填 |
-| `WXPUSHER_UID` | 无 | UID，多个值用英文逗号分隔 |
-| `WXPUSHER_TOPIC_IDS` | 无 | Topic ID，多个值用英文逗号分隔 |
-| `EMAIL_SMTP_HOST` | `smtp.qq.com` | SMTP 服务器地址 |
-| `EMAIL_SMTP_PORT` | `465` | SMTP 端口 |
-| `EMAIL_SMTP_SSL` | `true` | `false` 时改用 STARTTLS（建议配 587 端口） |
-| `EMAIL_SMTP_USER` | 无 | 发件邮箱，email 通道启用时必填 |
-| `EMAIL_SMTP_AUTH_CODE` | 无 | SMTP 授权码，email 通道启用时必填 |
-| `EMAIL_TO` | 无 | 收件邮箱，多个用英文逗号分隔 |
-| `EMAIL_FROM` | 同 USER | 可选，覆盖显示的发件地址 |
-| `FEISHU_WEBHOOK_URL` | 无 | 飞书自定义机器人 Webhook，feishu 通道启用时必填 |
-| `FEISHU_SECRET` | 无 | 飞书签名密钥，启用签名校验时填 |
-| `QQ_BOT_APP_ID` | 无 | QQ 开放平台 AppID，qq 通道启用时必填 |
-| `QQ_BOT_APP_SECRET` | 无 | QQ 开放平台 AppSecret，qq 通道启用时必填 |
-| `QQ_BOT_GROUP_OPENIDS` | 无 | 群 openid，多个用英文逗号分隔 |
+| `PUSH_CHANNELS` | `wxpusher` | 启用通道：`wxpusher,email,feishu,qq` |
+| `WXPUSHER_APP_TOKEN` | 无 | WxPusher AppToken |
+| `WXPUSHER_UID` | 无 | 接收者 UID，多个用英文逗号分隔 |
+| `WXPUSHER_TOPIC_IDS` | 无 | Topic ID，多个用英文逗号分隔 |
 | `CONTENT_MODE` | `full` | `full` 完整内容，`summary` 摘要模式 |
 | `RSS_URL` | 大黑 AI RSS | RSS 地址 |
-| `STATE_FILE` | `data/state.json` | 去重状态文件 |
+| `STATE_FILE` | `data/state.json` | 各通道去重状态文件 |
 | `DRY_RUN` | `false` | 只检查，不发送、不更新状态 |
-| `PUSH_ON_FIRST_RUN` | `false` | 状态为空时是否推送最新一期 |
-| `FORCE_PUSH_LATEST` | `false` | 强制重发最新一期且不修改去重状态，用于手动测试 |
-| `MAX_CATCHUP_ITEMS` | `6` | 状态落后太多时最多补发几期 |
-| `HTTP_CONNECT_TIMEOUT` | `10` | 连接超时秒数 |
-| `HTTP_READ_TIMEOUT` | `20` | 读取超时秒数 |
+| `PUSH_ON_FIRST_RUN` | `false` | 首次运行时是否推送最新一期 |
+| `FORCE_PUSH_LATEST` | `false` | 强制重发最新一期用于测试，不更新状态 |
+| `MAX_CATCHUP_ITEMS` | `6` | RSS 落后时最多补发期数 |
+| `HTTP_CONNECT_TIMEOUT` | `10` 秒 | HTTP 建连超时 |
+| `HTTP_READ_TIMEOUT` | `20` 秒 | HTTP 读取超时 |
+| `EMAIL_SMTP_HOST` / `PORT` / `SSL` | `smtp.qq.com` / `465` / `true` | 邮箱 SMTP 连接方式 |
+| `EMAIL_SMTP_USER` / `AUTH_CODE` / `TO` | 无 | 发件邮箱、SMTP 授权码、收件人 |
+| `EMAIL_FROM` | 同发件账号 | 可选的显示发件地址 |
+| `FEISHU_WEBHOOK_URL` / `FEISHU_SECRET` | 无 | 飞书机器人地址与签名密钥 |
+| `QQ_BOT_APP_ID` / `APP_SECRET` / `GROUP_OPENIDS` | 无 | QQ 机器人凭据和目标群 |
 
-### 项目结构
+</details>
+
+## 项目结构
 
 ```text
 DaheiAIPusher/
-├── .github/workflows/push.yml   # 定时打工人
-├── data/state.json              # 记住每条通道各推到哪了
-├── scripts/preview.py           # 本地预览消息样式
+├── .github/workflows/push.yml   # GitHub Actions 定时任务
+├── assets/readme/pipeline.svg   # 项目流程图
+├── deploy/server/               # systemd 配置模板
+├── docs/images/                 # 二维码与真实推送截图
+├── scripts/                     # 安装、更新和预览脚本
 ├── src/
-│   ├── channels/                # 推送通道：wxpusher / email / feishu / qq
-│   ├── feed.py                  # 读取和解析 RSS
-│   ├── main.py                  # 主流程：按通道编排推送
-│   ├── render.py                # 消息排版（HTML 卡片与结构化条目）
-│   └── state.py                 # 状态读写（按通道记录游标）
-└── tests/                       # 防止“改一行，坏一片”
+│   ├── channels/                 # WxPusher、QQ、飞书、邮箱
+│   ├── feed.py                   # RSS 读取与解析
+│   ├── main.py                   # 通道调度与推送状态
+│   ├── render.py                 # 消息卡片排版
+│   └── state.py                  # 状态文件读写
+└── tests/                        # 自动化测试
 ```
 
-### 测试
+运行测试：
 
 ```powershell
 python -m unittest discover -s tests -v
 ```
 
-## 感谢
+## 感谢与版权
 
-首先感谢 **[人工大黑](https://www.daheiai.com/)** 制作并持续更新[大黑 AI 速报](https://news.daheiai.com/)，还专门提供了 RSS，让这种自动化订阅成为可能。
+感谢 **[人工大黑](https://www.daheiai.com/)** 制作并持续更新[大黑 AI 速报](https://news.daheiai.com/)，还提供 RSS，让自动订阅变得简单。公开运营推送前，我已联系原作者并取得授权；推送会保留速报署名、原文入口和新闻信源。也感谢 [WxPusher](https://wxpusher.zjiecode.com/)、GitHub Actions，以及愿意订阅、Star、提 Issue 和帮忙抓 Bug 的朋友。
 
-感谢人工大黑对本项目的授权与支持。推送内容会保留“大黑AI速报”署名、原文入口和原始信源链接。
+代码采用 [MIT License](LICENSE)。许可证只覆盖本仓库代码，不代表速报文章、摘要或新闻素材也采用 MIT；内容版权仍属于原作者和对应信源。技术上能获取内容，不等于可以忽略授权。
 
-也感谢：
-
-- [WxPusher](https://wxpusher.zjiecode.com/) 提供消息推送能力；
-- [GitHub Actions](https://github.com/features/actions) 提供免费的云端打工人；
-- 每一位愿意扫码、Star、提 Issue，甚至帮忙抓 Bug 的同学。
-
-没有这些项目，这个仓库大概只会剩下一句：`print("记得看 AI 新闻")`。
-
-## 开源协议与内容版权
-项目代码采用 [MIT License](LICENSE) 开源，你可以使用、修改、分发，也可以在保留版权和许可声明的前提下用于自己的项目。
-
-需要特别说明：
-
-- MIT 协议只覆盖本仓库的程序代码；
-- “大黑AI速报”的文章、摘要和视觉素材不因此变成 MIT 内容；
-- 速报内容版权属于原作者，引用的新闻与素材权利属于对应的原始信源；
-- Fork 后如果要公开运营、商业化或改变内容用途，请自行取得相应授权。
-
-简单说就是：代码可以拿去折腾，别顺手把别人的内容版权也 `git clone` 走了。
-
-## 最后
-
-如果这个项目对你有用，可以点个 Star；如果它突然不推了，欢迎提 Issue；如果你有更好的排版或功能建议，也欢迎一起改进。
-
-请不要在 Issue、截图或日志里公开 AppToken。保护密钥，从不把 `config.py` 上传到 GitHub 做起。
+喜欢这个项目的话，欢迎点个 [Star](https://github.com/King52HerTz/DaheiAIPusher)。如果推送出问题或有改进建议，也欢迎提交 Issue。AppToken 是应用密钥，请放在 GitHub Secrets 或服务器私密配置中，不要提交到代码或截图里。
